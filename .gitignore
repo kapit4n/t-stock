@@ -1,0 +1,7 @@
+*.deb
+logs/
+RUNNING_PID
+*.jar
+.sbtserver/
+project/
+target/

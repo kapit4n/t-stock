@@ -1,0 +1,40 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit messages: Messages, request: Request[Any])
+@import be.objectify.deadbolt.scala.views.html._
+@import helper._
+
+@main("Reports") {
+    @examples.templates.nav(handler)
+    <div>@messages("reports")</div>
+    <div class="table table-bordered">
+        <table class="table table-bordered" id="reportes">
+            <thead>
+                <tr>
+                    <th>@messages("report")</th>
+                    <th>-----------</th>
+                </tr>
+            </thead>
+        <tbody>
+            <tr>
+                <td>@messages("generalLedger")</td>
+                <td><a href="/reportes_balance" class="btn btn-info btn-sm">@messages("view")</a></td>
+            </tr>
+            <tr>
+                <td>@messages("financialStatement")</td>
+                <td><a href="/result_finance" class="btn btn-info btn-sm">@messages("view")</a></td>
+            </tr>
+            <tr>
+                <td>@messages("journalEntry")</td>
+                <td><a href="/reportes_diary" class="btn btn-info btn-sm">@messages("view")</a></td>
+            </tr>
+            <tr>
+                <td>@messages("mayorBooks")</td>
+                <td><a href="/reportes_mayor" class="btn btn-info btn-sm">@messages("view")</a></td>
+            </tr>
+            <tr>
+                <td>@messages("trialBalance")</td>
+                <td><a href="/reportes_sumasYSaldos" class="btn btn-info btn-sm">@messages("view")</a></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+}
