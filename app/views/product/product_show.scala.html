@@ -12,7 +12,7 @@
            <a href="/product_update/@row.id" class="btn btn-primary btn-sm">@messages("edit")</a>
         }
         @restrict(roles = List(Array("productEdit"))) {
-           <a href="/product_transform/@row.id" class="btn btn-primary btn-sm">@messages("transform")</a>
+           <a href="/productTransform_add/@row.id" class="btn btn-primary btn-sm">@messages("transform")</a>
         }
         @restrict(roles = List(Array("productDelete"))) {
            <a href="/product_remove/@row.id" class="btn btn-danger btn-sm">@messages("remove")</a>

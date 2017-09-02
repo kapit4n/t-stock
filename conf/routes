@@ -111,6 +111,19 @@ GET     /product_list         			controllers.ProductController.index
 GET     /product_reorder_list         	controllers.ProductController.reorder_index
 GET     /product_add         			controllers.ProductController.addGet
 
+# Product transformation routes
+GET     /productTransform_show/:id 				controllers.ProductTransformController.show(id: Long)
+GET     /productTransform_update/:id            controllers.ProductTransformController.getUpdate(id: Long)
+GET     /productTransform_remove/:id        	controllers.ProductTransformController.delete(id: Long)
+GET     /productTransforms/:id 					controllers.ProductTransformController.getById(id: Long)
+POST    /productTransform_update             	controllers.ProductTransformController.updatePost
+
+POST    /productTransform                 		controllers.ProductTransformController.add
+GET     /productTransforms         				controllers.ProductTransformController.getProductTransforms
+GET     /productTransform_list         			controllers.ProductTransformController.index
+GET     /productTransform_add/:id         		controllers.ProductTransformController.addGet(id: Long)
+
+
 # Now for product Invs
 GET     /productInv_show/:id 				controllers.ProductInvController.show(id: Long)
 GET     /productInv_update/:id        		controllers.ProductInvController.getUpdate(id: Long)
