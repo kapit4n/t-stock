@@ -21,7 +21,9 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.36",
   specs2 % Test,
   "be.objectify" %% "deadbolt-scala" % "2.4.1"
-)     
+)
+
+libraryDependencies += "org.webjars" % "chartjs" % "2.6.0"  
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
