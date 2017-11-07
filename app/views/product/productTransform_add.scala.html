@@ -10,7 +10,7 @@
         }
     </div>
 
-    @form(routes.ProductInvController.add()) {
+    @form(routes.ProductTransformController.add()) {
         @select(field = row("productId"), options = options(products))
         @select(field = row("vendorId"), options = options(vendors))
         @select(field = row("measureId"), options = options(measures))

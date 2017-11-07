@@ -20,7 +20,7 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class ProductTransformController @Inject() (repo: ProductInvRepository, repoProduct: ProductRepository, repoProductVendor: ProductVendorRepository,
+class ProductTransformController @Inject() (repo: ProductTransformRepository, repoProduct: ProductRepository, repoProductVendor: ProductVendorRepository,
   repoMeasure: MeasureRepository,
   repoProvee: VendorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
@@ -47,7 +47,7 @@ class ProductTransformController @Inject() (repo: ProductInvRepository, repoProd
   var vendorMap = getVendorMap()
   var measureMap = getMeasureMap(0)
   var productId: Long = 0
-  var updatedRow: ProductInv = _
+  var updatedRow: ProductTransform = _
 
   def index = LanguageAction.async { implicit request =>
     repo.list().map { res =>
