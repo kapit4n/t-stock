@@ -12,7 +12,6 @@
 
     @form(routes.ProductTransformController.add()) {
         @select(field = row("productId"), options = options(products))
-        @select(field = row("vendorId"), options = options(vendors))
         @select(field = row("measureId"), options = options(measures))
         @inputText(row("amount"))
         <input type="submit" class="btn btn-primary btn-sm" value=@messages("save") />

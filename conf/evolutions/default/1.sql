@@ -13,6 +13,9 @@ drop table IF EXISTS vendorContractItem;
 drop table IF EXISTS reportes;
 drop table IF EXISTS product;
 drop table IF EXISTS productInv;
+drop table IF EXISTS productTransformDetail;
+drop table IF EXISTS productTransform;
+drop table IF EXISTS productTransformRaw;
 drop table IF EXISTS discountReport;
 drop table IF EXISTS discountDetail;
 drop table IF EXISTS requestRow;
@@ -28,31 +31,31 @@ drop table IF EXISTS productVendor;
 ## --- !Ups
 create table company (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null
+  name TEXT not null
 );
 
 create table category (
-  name VARCHAR(100) NOT NULL PRIMARY KEY,
-  description VARCHAR(100)
+  name TEXT NOT NULL PRIMARY KEY,
+  description TEXT
 );
 
 create table measure (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100),
+  name TEXT,
   quantity double,
-  description VARCHAR(250),
+  description TEXT,
   measureId INT,
-  measureName VARCHAR(100)
+  measureName TEXT
 );
 
 create table account (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   code VARCHAR(30),
-  name VARCHAR(100),
+  name TEXT,
   type VARCHAR(30),
   parent INT(6),
   negativo VARCHAR(30),
-  description VARCHAR(250),
+  description TEXT,
   child boolean,
   debit double,
   credit double,
@@ -63,24 +66,24 @@ create table transaction (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   date VARCHAR(30),
   type VARCHAR(30),
-  description VARCHAR(250),
+  description TEXT,
   createdBy INT,
-  createdByName VARCHAR(100),
+  createdByName TEXT,
   autorizedBy INT,
-  autorizedByName VARCHAR(100), 
+  autorizedByName TEXT, 
   receivedBy INT,
-  receivedByName VARCHAR(100), 
+  receivedByName TEXT, 
   updatedBy INT(6),
-  updatedByName VARCHAR(100),
+  updatedByName TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 create table setting (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100),
+  name TEXT,
   president VARCHAR(50),
   language VARCHAR(50),
-  description VARCHAR(2505)
+  description TEXT
 );
 
 create table logEntry (
@@ -88,8 +91,8 @@ create table logEntry (
   action VARCHAR(100),
   tableName1 VARCHAR(100),
   userId INT(6),
-  userName VARCHAR(255),
-  description VARCHAR(255),
+  userName TEXT,
+  description TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -101,15 +104,15 @@ create table transactionDetail (
   credit double,
   transactionDate VARCHAR(30),
   accountCode VARCHAR(30),
-  accountName VARCHAR(100),
+  accountName TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   createdBy INT,
-  createdByName VARCHAR(100)
+  createdByName TEXT
 );
 
 create table bancos (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null,
+  name TEXT not null,
   tipo VARCHAR(30) not null,
   currentMoney VARCHAR(30),
   typeMoney VARCHAR(30)
@@ -117,18 +120,18 @@ create table bancos (
 
 create table product (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null,
+  name TEXT not null,
   cost double DEFAULT 0,
   totalValue double DEFAULT 0,
   percent double DEFAULT 0,
   price double DEFAULT 0,
-  description VARCHAR(250) DEFAULT '',
+  description TEXT,
   measureId INT DEFAULT 0,
-  measureName VARCHAR(100) DEFAULT '',
-  currentAmount INT  DEFAULT 0,
-  stockLimit INT  DEFAULT 0,
+  measureName TEXT,
+  currentAmount INT,
+  stockLimit INT,
   vendorId INT DEFAULT 0,
-  vendorName VARCHAR(100) DEFAULT '',
+  vendorName TEXT,
   vendorCode VARCHAR(50) DEFAULT '',
   category VARCHAR(50) DEFAULT '',
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -136,12 +139,12 @@ create table product (
 
 create table customer (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null,
+  name TEXT not null,
   carnet INT not null,
   phone INT,
   address VARCHAR(100),
   account VARCHAR(30),
-  companyName VARCHAR(100),
+  companyName TEXT,
   status VARCHAR(30),
   totalDebt double,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -149,7 +152,7 @@ create table customer (
 
 create table vendor (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null,
+  name TEXT not null,
   phone INT,
   address VARCHAR(100),
   contact VARCHAR(100),
@@ -185,7 +188,7 @@ create table reportes (
 
 create table user (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) not null,
+  name TEXT not null,
   carnet INT not null,
   phone INT,
   address VARCHAR(30),
@@ -199,7 +202,7 @@ create table user (
 create table userRole (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   userId INT,
-  roleName VARCHAR(100),
+  roleName TEXT,
   roleCode VARCHAR(50)
 );
 
@@ -211,7 +214,7 @@ create table productVendor (
 
 create table roles (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  roleName VARCHAR(100),
+  roleName TEXT,
   roleCode VARCHAR(50)
 );
 
@@ -219,13 +222,13 @@ create table productRequest (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   date VARCHAR(30),
   employee INT,
-  employeename VARCHAR(100),
+  employeename TEXT,
   storekeeper INT,
-  storekeeperName VARCHAR(100),
+  storekeeperName TEXT,
   user INT,
-  userName VARCHAR(100),
+  userName TEXT,
   module INT,
-  moduleName VARCHAR(100),
+  moduleName TEXT,
   totalPrice double,
   paid double,
   credit double,
@@ -236,9 +239,9 @@ create table productRequest (
   type VARCHAR(30),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   createdBy INT,
-  createdByName VARCHAR(100),
+  createdByName TEXT,
   acceptedBy INT,
-  acceptedByName VARCHAR(100),
+  acceptedByName TEXT,
   acceptedAt Date
 );
 
@@ -246,9 +249,9 @@ create table requestRow (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   requestId INT,
   productId INT,
-  productName VARCHAR(100),
+  productName TEXT,
   customerId INT,
-  customerName VARCHAR(100),
+  customerName TEXT,
   quantity INT,
   price double,
   totalPrice double,
@@ -257,22 +260,22 @@ create table requestRow (
   paidDriver double,
   creditDriver double,
   measureId INT,
-  measureName VARCHAR(100),
+  measureName TEXT,
   status VARCHAR(30),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   createdBy INT,
-  createdByName VARCHAR(100)
+  createdByName TEXT
 );
 
 create table requestRowCustomer (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   requestRowId INT,
   productId INT,
-  productName VARCHAR(100),
+  productName TEXT,
   customerId INT,
-  customerName VARCHAR(100),
+  customerName TEXT,
   measureId INT,
-  measureName VARCHAR(100),
+  measureName TEXT,
   quantity INT,
   price double,
   totalPrice double,
@@ -282,7 +285,7 @@ create table requestRowCustomer (
   type VARCHAR(30),
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   createdBy INT,
-  createdByName VARCHAR(100),
+  createdByName TEXT,
   payType VARCHAR(20)
 );
 
@@ -291,11 +294,57 @@ create table productInv (
   productId INT,
   vendorId INT,
   measureId INT,
-  productName VARCHAR(60),
-  vendorName VARCHAR(60),
-  measureName VARCHAR(60),
-  amount INT  DEFAULT 0,
-  amountLeft INT  DEFAULT 0,
+  productName TEXT,
+  vendorName TEXT,
+  measureName TEXT,
+  amount INT,
+  amountLeft INT,
+  cost_unit double  DEFAULT 0,
+  total_cost double  DEFAULT 0,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table productTransform (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  productId INT,
+  vendorId INT,
+  measureId INT,
+  productName TEXT,
+  vendorName TEXT,
+  measureName TEXT,
+  amount INT,
+  amountLeft INT,
+  cost_unit double  DEFAULT 0,
+  total_cost double  DEFAULT 0,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table productTransformDetail (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  productTranformId INT,
+  status text,
+  measureId INT,
+  productName TEXT,
+  vendorName TEXT,
+  measureName TEXT,
+  amount INT,
+  amountLeft INT,
+  cost_unit double  DEFAULT 0,
+  total_cost double  DEFAULT 0,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table productTransformRaw (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  productTransformId INT,
+  productId INT,
+  typeId INT,
+  measureId INT,
+  productName TEXT,
+  vendorName TEXT,
+  measureName TEXT,
+  amount INT,
+  amountLeft INT,
   cost_unit double  DEFAULT 0,
   total_cost double  DEFAULT 0,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -316,7 +365,7 @@ create table discountDetail (
   discountReport INT,
   requestRow INT,
   customerId INT,
-  customerName VARCHAR(100),
+  customerName TEXT,
   status VARCHAR(30),
   discount double
 );

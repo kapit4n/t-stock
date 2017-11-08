@@ -20,7 +20,8 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class CardController @Inject() (repo: ProductRequestRepository, repoProducts: ProductRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
+class CardController @Inject() (repo: ProductRequestRepository, repoProducts: ProductRepository,
+  repoRow: RequestRowRepository, repoVete: UserRepository,
   repoSto: UserRepository, repoInsUser: UserRepository,
   val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
