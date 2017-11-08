@@ -21,7 +21,7 @@ Hi Stock is a system that will help us to manage the stock in the an industry th
 * Open the application with sublime
 
 ## mockup
-![Inventory](https://github.com/kapit4n/t-stock/raw/master/mockups/Inventory_page.png)
+![Inventory](https://bytebucket.org/lartl/t-stock/raw/f1a789ec25579e402cac5c66bf33bd158f2d4d66/mockups/Inventory_page.png?token=40c1ec95911250c61d3ab0ba7637ee9102eb73bc)
 
 
 ## Load dependencies with activator
