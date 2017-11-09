@@ -87,7 +87,7 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   }
 
   def list(): Future[Seq[LogEntryShow]] = db.run {
-    tableQShow.result
+    tableQShow.sortBy(_.createdAt.desc).take(100).result
   }
 
   def getById(id: Long): Future[Seq[LogEntryShow]] = db.run {
