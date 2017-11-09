@@ -18,17 +18,23 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class MainController @Inject() (repo: UserRepository, val messagesApi: MessagesApi, deadbolt: DeadboltActions)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class MainController @Inject() (repo: UserRepository, logEntryRepo: LogEntryRepository, val messagesApi: MessagesApi, deadbolt: DeadboltActions)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   def index = LanguageAction { implicit request =>
     Await.result(repo.getById(request.session.get("userId").getOrElse("0").toLong).map { res2 =>
       if (res2.length > 0) {
-        Ok(views.html.index(new MyDeadboltHandler))
+        Ok(views.html.index(new MyDeadboltHandler, getLogEntries()))
       } else {
         Redirect("/login")
         //Ok(views.html.index(new MyDeadboltHandler))
       }
     }, 2000.millis)
+  }
+
+  def getLogEntries(): Seq[LogEntryShow] = {
+    Await.result(logEntryRepo.list().map { res =>
+      res
+    }, 1000.millis)
   }
 
   //def index = deadbolt.WithAuthRequest()() { authRequest =>

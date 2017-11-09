@@ -23,6 +23,6 @@ import security.MyDeadboltHandler
 class Application @Inject() (val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
   def index = LanguageAction {
     implicit request =>
-      Ok(views.html.index(new MyDeadboltHandler))
+      Ok(views.html.index(new MyDeadboltHandler, List[LogEntryShow]()))
   }
 }
