@@ -93,6 +93,7 @@ create table logEntry (
   userId INT(6),
   userName TEXT,
   description TEXT,
+  link TEXT,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

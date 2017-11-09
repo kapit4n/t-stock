@@ -58,7 +58,8 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
     def userId = column[Long]("userId")
     def userName = column[String]("userName")
     def description = column[String]("description")
-    def * = (id, action, tableName1, userId, userName, description) <> ((LogEntry.apply _).tupled, LogEntry.unapply)
+    def link = column[String]("link")
+    def * = (id, action, tableName1, userId, userName, description, link) <> ((LogEntry.apply _).tupled, LogEntry.unapply)
   }
 
   private class LogEntrysShowTable(tag: Tag) extends Table[LogEntryShow](tag, "logEntry") {
@@ -68,8 +69,9 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
     def userId = column[Long]("userId")
     def userName = column[String]("userName")
     def description = column[String]("description")
+    def link = column[String]("link")
     def createdAt = column[String]("createdAt")
-    def * = (id, action, tableName1, userId, userName, description, createdAt) <> ((LogEntryShow.apply _).tupled, LogEntryShow.unapply)
+    def * = (id, action, tableName1, userId, userName, description, link, createdAt) <> ((LogEntryShow.apply _).tupled, LogEntryShow.unapply)
   }
 
   private val tableQ = TableQuery[LogEntrysTable]
@@ -77,13 +79,24 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   def create(action: String, tableName1: String, userId: Long, userName: String, description: String): Future[LogEntry] = db.run {
     val description_1 = tableName1 + " (" + description + ") fue " + action + " por " + userName
-    (tableQ.map(p => (p.action, p.tableName1, p.userId, p.userName, p.description))
+    (tableQ.map(p => (p.action, p.tableName1, p.userId, p.userName, p.description, p.link))
       returning tableQ.map(_.id)
-      into ((nameAge, id) => LogEntry(id, nameAge._1, nameAge._2, nameAge._3, nameAge._4, nameAge._5))) += (action, tableName1, userId, userName, description_1)
+      into ((nameAge, id) => LogEntry(id, nameAge._1, nameAge._2, nameAge._3, nameAge._4, nameAge._5, nameAge._6))) += (action, tableName1, userId, userName, description_1, "")
+  }
+
+  def create(id: Long, action: String, tableName1: String, userId: Long, userName: String, description: String): Future[LogEntry] = db.run {
+    val description_1 = tableName1 + " (" + description + ") fue " + action + " por " + userName
+    (tableQ.map(p => (p.action, p.tableName1, p.userId, p.userName, p.description, p.link))
+      returning tableQ.map(_.id)
+      into ((nameAge, id) => LogEntry(id, nameAge._1, nameAge._2, nameAge._3, nameAge._4, nameAge._5, nameAge._6))) += (action, tableName1, userId, userName, description_1, tableName1.toLowerCase + "_show/" + id)
   }
 
   def createLogEntry(action: String, tableName1: String, userId: Long, userName: String, description: String) = {
     Await.result(create(action, tableName1, userId, userName, description).map(res => print("DONE")), 3000.millis)
+  }
+
+  def createLogEntry(id: Long, action: String, tableName1: String, userId: Long, userName: String, description: String) = {
+    Await.result(create(id, action, tableName1, userId, userName, description).map(res => print("DONE")), 3000.millis)
   }
 
   def list(): Future[Seq[LogEntryShow]] = db.run {

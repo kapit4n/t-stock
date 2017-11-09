@@ -47,17 +47,19 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
 
   def create(name: String, carnet: Int, phone: Int, address: String,
     account: String, userId: Long, userName: String): Future[Customer] = db.run {
-    repoLog.createLogEntry(repoLog.CREATE, repoLog.PRODUCTOR, userId, userName, name);
     (tableQ.map(
       p => (
         p.name, p.carnet, p.phone, p.address, p.account,
         p.companyName, p.totalDebt)) returning tableQ.map(_.id) into (
-        (nameAge, id) =>
+        (nameAge, id) =>{
+          repoLog.createLogEntry(id, repoLog.CREATE, repoLog.PRODUCTOR, userId, userName, name);
           Customer(
             id, nameAge._1, nameAge._2,
             nameAge._3, 
             nameAge._4, nameAge._5, nameAge._6,
-            nameAge._7))) += (
+            nameAge._7)
+        }
+        )) += (
           name, carnet, phone, address, account,
           "", 0)
   }
@@ -89,7 +91,7 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
     address: String, account: String, companyName: String,
     totalDebt: Double, 
     userId: Long, userName: String): Future[Seq[Customer]] = db.run {
-    repoLog.createLogEntry(repoLog.UPDATE, repoLog.PRODUCTOR, userId, userName, name);
+    repoLog.createLogEntry(id, repoLog.UPDATE, repoLog.PRODUCTOR, userId, userName, name);
     val q = for { c <- tableQ if c.id === id } yield c.name
     db.run(q.update(name))
     val q2 = for { c <- tableQ if c.id === id } yield c.carnet
