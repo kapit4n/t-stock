@@ -6,6 +6,7 @@
   <nav>
      <ul>
         <li><a href="/profile">@messages("profile")</a></li>
+        <li><a href="/card_show/1">@messages("card")</a></li>
         @restrict(roles = List(Array("product"))) {
             <li>
                <a id="product" href="/product_list">@messages("products")<span class="caret"></span></a>
