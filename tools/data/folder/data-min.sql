@@ -249,3 +249,7 @@ UPDATE product SET stockLimit = 10;
 
 INSERT INTO `setting`(id, name, president, language, description) VALUES 
 (1, 'Dyamsoft Company','Luis Arce','us','Description');
+
+UPDATE product SET description = 'description';
+
+UPDATE product SET vendorCode = 0;
