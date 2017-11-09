@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, row: ProductRequest, children: Seq[RequestRow], rows: Seq[Product])(implicit messages: Messages, request: Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], products: Seq[Product])(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
 
@@ -9,10 +9,10 @@
             <a href="/productRequest_list" class="btn btn-primary btn-sm">@messages("toList")</a>
         }
         @restrict(roles = List(Array("productRequestEdit"))) {
-            <a href="/productRequest_update/@row.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
+            <a href="/productRequest_update/@productRequest.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
         }
         @restrict(roles = List(Array("productRequestDelete"))) {
-           <a href="/productRequest_remove/@row.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+           <a href="/productRequest_remove/@productRequest.id" class="btn btn-danger btn-sm">@messages("remove")</a>
         }
     </div>
     <div class="container">
@@ -64,33 +64,33 @@
             </div>
         </div>
         <div class="col-md-6" style="background: white;">
-            @for(row <- rows) {
-                <div style="background: blue; width: 80px; height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px;">
-                    <span>@row.name</span>
+            @for(product <- products) {
+                <div class="col-md-2" style="background: white; height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px;">
+                    <span>@product.name</span>
                 </div>
             }
         </div>
-    </div>
-        <div>
+    </div class="row">
+        <div class="col-md-2">
             <div style="display: inline-block;"> @messages("date"): </div>
-            <div style="display: inline-block;" id="date">@row.date</div>
+            <div style="display: inline-block;" id="date">@productRequest.date</div>
         </div>
-        <div>
+        <div class="col-md-2">
             <div style="display: inline-block;"> Employee: </div>
-            <div style="display: inline-block;" id="employeeName">@row.employeeName</div>
+            <div style="display: inline-block;" id="employeeName">@productRequest.employeeName</div>
         </div>
-        <div>
+        <div class="col-md-2">
             <div style="display: inline-block;"> Store: </div>
-            <div style="display: inline-block;" id="storekeeperName">@row.storekeeperName</div>
+            <div style="display: inline-block;" id="storekeeperName">@productRequest.storekeeperName</div>
         </div>
-        <div>
+        <div class="col-md-2">
             <div style="display: inline-block;"> @messages("status"): </div>
-            <div style="display: inline-block;" id="status">@row.status</div>
+            <div style="display: inline-block;" id="status">@productRequest.status</div>
         </div>
     </div>
     <div>
         @restrict(roles = List(Array("requestRowCreate"))) {
-            <div style="display: inline-block;"> <a id="addDetail" href="/requestRow_add/@row.id" class="btn btn-primary btn-sm">@messages("addDetail")</a> </div>
+            <div style="display: inline-block;"> <a id="addDetail" href="/requestRow_add/@productRequest.id" class="btn btn-primary btn-sm">@messages("addDetail")</a> </div>
         }
     </div>
 
