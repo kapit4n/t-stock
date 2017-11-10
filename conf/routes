@@ -98,6 +98,7 @@ GET     /vendor_add         			controllers.VendorController.addGet
 
 # Now for insumos or products
 GET     /product_search 				controllers.ProductController.searchProductPost
+GET     /add_card 						controllers.CardController.addCardPost
 GET     /product_show/:id 				controllers.ProductController.show(id: Long)
 GET     /product_update/:id        		controllers.ProductController.getUpdate(id: Long)
 GET     /product_remove/:id        		controllers.ProductController.delete(id: Long)

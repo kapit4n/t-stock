@@ -34,6 +34,11 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       "detail" -> text)(CreateProductRequestForm.apply)(CreateProductRequestForm.unapply)
   }
 
+  val addCardForm: Form[AddCardForm] = Form {
+    mapping(
+      "id" -> nonEmptyText)(AddCardForm.apply)(AddCardForm.unapply)
+  }
+
   var employeesNames = getEmployeeListNamesMap()
   var storeNames = getStorekeepersNamesMap()
   var products = getProducts()
@@ -116,7 +121,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   def show(id: Long) = LanguageAction.async { implicit request =>
     val requestRows = getChildren(id)
     repo.getById(id).map { res =>
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, products))
+      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products))
     }
   }
 
@@ -226,6 +231,17 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     }
   }
 
+  def addCardPost = LanguageAction.async { implicit request =>
+    addCardForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Redirect(routes.CardController.show(1)))
+      },
+      res => {
+        Future.successful(Redirect(routes.CardController.show(1)))
+      })
+  }
+
+
   // update required
   def updatePost = LanguageAction.async { implicit request =>
     updateForm.bindFromRequest.fold(
@@ -243,6 +259,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       })
   }
 }
+
+case class AddCardForm(id: String)
 
 //case class CreateProductRequestForm(date: String, employee: Long, storekeeper: Long, status: String, detail: String)
 
