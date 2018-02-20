@@ -20,6 +20,8 @@ Hi Stock is a system that will help us to manage the stock in the an industry th
 * Go to localhost:9000
 * Open the application with sublime
 
+## mockup card show page
+![Inventory](https://bytebucket.org/lartl/t-stock/raw/85f26b9242d3fe10ff369b96769d63c8ef40f669/mockups/t_stock_card_show.png?token=1345fa2baa742bffa31e65359cf8e3e15ced300e)
 ## mockup
 ![Inventory](https://bytebucket.org/lartl/t-stock/raw/f1a789ec25579e402cac5c66bf33bd158f2d4d66/mockups/Inventory_page.png?token=40c1ec95911250c61d3ab0ba7637ee9102eb73bc)
 
