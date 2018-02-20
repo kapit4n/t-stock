@@ -120,6 +120,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   // to copy
   def show(id: Long) = LanguageAction.async { implicit request =>
     val requestRows = getChildren(id)
+    products = getProducts()
     repo.getById(id).map { res =>
       Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products))
     }
@@ -237,6 +238,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
         Future.successful(Redirect(routes.CardController.show(1)))
       },
       res => {
+        // Create the order detail here with res.id and currentCardId with 1 default quantity
         Future.successful(Redirect(routes.CardController.show(1)))
       })
   }
