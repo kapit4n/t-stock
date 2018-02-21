@@ -15,6 +15,7 @@ import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import java.util.Calendar
 
 import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
@@ -22,7 +23,7 @@ import security.MyDeadboltHandler
 
 class CardController @Inject() (repo: ProductRequestRepository, repoProducts: ProductRepository,
   repoRow: RequestRowRepository, repoVete: UserRepository,
-  repoSto: UserRepository, repoInsUser: UserRepository,
+  repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
   val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateProductRequestForm] = Form {
@@ -42,6 +43,21 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   var employeesNames = getEmployeeListNamesMap()
   var storeNames = getStorekeepersNamesMap()
   var products = getProducts()
+  var requestObj = ProductRequest(0, "", 0, "", 0, "", "", "", "", 0, "")
+  var unidades: Map[String, String] = _
+
+  def getMeasuresMap(): Map[String, String] = {
+    Await.result(repoUnit.getListNames().map {
+      case (res1) =>
+        val cache = collection.mutable.Map[String, String]()
+        res1.foreach {
+          case (key: Long, value: String) =>
+            cache put (key.toString(), value)
+        }
+        cache.toMap
+    }, 3000.millis)
+  }
+
 
   def index = LanguageAction.async { implicit request =>
     repo.list().map { res =>
@@ -120,8 +136,10 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   // to copy
   def show(id: Long) = LanguageAction.async { implicit request =>
     val requestRows = getChildren(id)
+    unidades = getMeasuresMap()
     products = getProducts()
     repo.getById(id).map { res =>
+      requestObj = res(0)
       Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products))
     }
   }
@@ -239,7 +257,16 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       },
       res => {
         // Create the order detail here with res.id and currentCardId with 1 default quantity
-        Future.successful(Redirect(routes.CardController.show(1)))
+        val selProduct = products.filter(_.id == res.id.toLong).head
+        val statusStr = "status"
+
+        repoRow.create(requestObj.id, selProduct.id, selProduct.name,
+          1, selProduct.price, selProduct.price, 0, 0, 0, 0, statusStr,
+          selProduct.measureId, unidades(selProduct.measureId.toString),
+          request.session.get("userId").get.toLong,
+          request.session.get("userName").get.toString).map { _ =>
+            Redirect(routes.CardController.show(1))
+          }
       })
   }
 
