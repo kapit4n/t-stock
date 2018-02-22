@@ -139,11 +139,6 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     unidades = getMeasuresMap()
     products = getProducts()
     val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x,y) => x + y)
-    println(totalPrice)
-    println(totalPrice)
-    println(totalPrice)
-    println(totalPrice)
-    println(totalPrice)
 
     repo.getById(id).map { res =>
       requestObj = res(0)

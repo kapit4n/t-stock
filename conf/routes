@@ -220,6 +220,7 @@ GET     /requestRow_show/:id 				controllers.RequestRowController.show(id: Long)
 GET     /requestRow_update/:id        		controllers.RequestRowController.getUpdate(id: Long)
 GET     /requestRow_fill/:id        		controllers.RequestRowController.getFill(id: Long)
 GET     /requestRow_remove/:id        		controllers.RequestRowController.delete(id: Long)
+GET     /requestRow_removeFromCard/:id 		controllers.RequestRowController.deleteFromCard(id: Long)
 GET     /requestRows/:id 					controllers.RequestRowController.getById(id: Long)
 POST    /requestRow_update             		controllers.RequestRowController.updatePost
 

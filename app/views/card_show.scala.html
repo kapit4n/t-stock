@@ -24,8 +24,7 @@
                         <tr>
                             <th>@messages("product")</th>
                             <th>@messages("quantity")</th>
-                            <th>@messages("price")</th>
-                            <th>@messages("status")</th>
+                            <th>@messages("subTotal")</th>
                             <th>-----------</th>
                         </tr>
                     </thead>
@@ -40,21 +39,20 @@
                                         @child.productName                                    
                                     }
                                 </td>
-                                <td>@child.quantity</td>
+                                <td><input type="text" name="quantity" value="@child.quantity"></td>
                                 <td>@child.price</td>
-                                <td>@child.status</td>
                                 <td>
                                    @restrict(roles = List(Array("requestRowShow"))) {
-                                       <a href="/requestRow_show/@child.id" class="btn btn-info btn-sm">@messages("view")</a>
+                                       <a href="/requestRow_show/@child.id" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>
                                    }
                                    @restrict(roles = List(Array("requestRowEdit"))) {
-                                       <a href="/requestRow_update/@child.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
+                                       <a href="/requestRow_update/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></a> 
                                    }
                                    @restrict(roles = List(Array("requestRowDelete"))) {
-                                       <a href="/requestRow_remove/@child.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+                                       <a href="/requestRow_removeFromCard/@child.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
                                    }
                                    @if(child.status != "entregado") {
-                                    <a href="/requestRow_fill/@child.id" class="btn btn-primary btn-sm">@messages("deliver")</a>
+                                    <a href="/requestRow_fill/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-deliver"></span></a>
                                    }
                                </td> 
                             </tr>
@@ -78,8 +76,7 @@
                         @inputText(addCardRow("id").copy(value=Option(product.id.toString)), 'hidden -> "true", '_label -> "")
                         <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                     </div>
-                }
-                
+                }                
             }
         </div>
     </div class="row">
