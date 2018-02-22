@@ -138,9 +138,16 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     val requestRows = getChildren(id)
     unidades = getMeasuresMap()
     products = getProducts()
+    val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x,y) => x + y)
+    println(totalPrice)
+    println(totalPrice)
+    println(totalPrice)
+    println(totalPrice)
+    println(totalPrice)
+
     repo.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products))
+      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products, totalPrice))
     }
   }
 
