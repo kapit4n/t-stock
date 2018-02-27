@@ -42,7 +42,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 
   var employeesNames = getEmployeeListNamesMap()
   var storeNames = getStorekeepersNamesMap()
-  var products = getProducts()
+  var productTuples = getProductTuples()
+  var productList = getProductList()
   var requestObj = ProductRequest(0, "", 0, "", 0, "", "", "", "", 0, "")
   var unidades: Map[String, String] = _
 
@@ -137,12 +138,12 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   def show(id: Long) = LanguageAction.async { implicit request =>
     val requestRows = getChildren(id)
     unidades = getMeasuresMap()
-    products = getProducts()
+    productTuples = getProductTuples()
     val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x,y) => x + y)
 
     repo.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, products, totalPrice))
+      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, productTuples, totalPrice))
     }
   }
 
@@ -189,7 +190,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 
         cache.toMap
     }, 3000.millis)
-  }
+  }                         
 
   def getEmployeeListNamesMap(): Map[String, String] = {
     Await.result(repoVete.listEmployees().map {
@@ -227,10 +228,26 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     }, 3000.millis)
   }
 
-  def getProducts(): Seq[Product] = {
+  def getProductTuples(): Seq[(Long, String)] = {
     Await.result(repoProducts.list().map {
-      case (res1) =>
-        res1
+      case (productList) =>
+        productList.map {
+          case (product) => 
+            (
+              product.id, 
+              if(product.name.length() > 10 ) 
+                product.name.slice(0,10) + ".."
+              else 
+                product.name 
+            )
+        }
+    }, 3000.millis)
+  }
+
+  def getProductList(): Seq[Product] = {
+    Await.result(repoProducts.list().map {
+      case (productList) =>
+        productList
     }, 3000.millis)
   }
 
@@ -259,7 +276,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       },
       res => {
         // Create the order detail here with res.id and currentCardId with 1 default quantity
-        val selProduct = products.filter(_.id == res.id.toLong).head
+        val selProduct = productList.filter(_.id == res.id.toLong).head
         val statusStr = "status"
 
         repoRow.create(requestObj.id, selProduct.id, selProduct.name,
