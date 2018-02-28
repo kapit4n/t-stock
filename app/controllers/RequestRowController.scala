@@ -246,11 +246,11 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
   }
 
   def deleteFromCard(id: Long) = LanguageAction.async {
-    repo.delete(id).map { res =>
-      if (productRequestId == 0) {
-        Redirect(routes.RequestRowController.index)
+    repo.deleteAndReturnId(id).map { res =>
+      if (res == 0) {
+        Redirect(routes.CardController.index)
       } else {
-        Redirect(routes.CardController.show(productRequestId))
+        Redirect(routes.CardController.show(res))
       }
     }
   }

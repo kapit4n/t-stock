@@ -4,7 +4,19 @@
 
 @main("view") {
     @examples.templates.nav(handler)
+
     <div class="container">
+
+        <button type="button" class="btn btn-primary btn-sm">Ajax Call</button>
+
+        <script type="text/javascript">
+            $("button").click(function(){
+                $.ajax({url: "/products", success: function(result){
+                    console.log(result);
+                }});
+            });           
+        </script>
+
         @restrict(roles = List(Array("productRequestList"))) {
             <a href="/productRequest_list" class="btn btn-primary btn-sm">@messages("toList")</a>
         }
@@ -40,7 +52,7 @@
                                     }
                                 </td>
                                 <td><input type="text" name="quantity" value="@child.quantity"></td>
-                                <td>@child.price</td>
+                                <td>@child.totalPrice</td>
                                 <td>
                                    @restrict(roles = List(Array("requestRowShow"))) {
                                        <a href="/requestRow_show/@child.id" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>

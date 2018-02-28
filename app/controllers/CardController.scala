@@ -284,7 +284,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
           selProduct.measureId, unidades(selProduct.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.CardController.show(1))
+            Redirect(routes.CardController.show(requestObj.id))
           }
       })
   }
