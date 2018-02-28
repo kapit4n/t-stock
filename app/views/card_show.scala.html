@@ -7,13 +7,17 @@
 
     <div class="container">
 
-        <button type="button" class="btn btn-primary btn-sm">Ajax Call</button>
+        <button type="button" class="btn btn-primary btn-sm">Save Card</button>
 
         <script type="text/javascript">
-            $("button").click(function(){
-                $.ajax({url: "/products", success: function(result){
-                    console.log(result);
-                }});
+            $("button").click(function() {
+                $("#rows tbody tr").each( function(index, rowItem) {
+                    var id = $($(rowItem).find("td")[0]).text();
+                    var quantity = $($($(rowItem).find("td")[2]).find("input")[0]).val();
+                    $.post( "/update_cardItems", { id: id, quantity: quantity}, function( data ) {
+                        console.log(data);
+                    });
+                });
             });           
         </script>
 
@@ -34,6 +38,7 @@
                 <table class="table table-bordered" id="rows">
                     <thead>
                         <tr>
+                            <th>@messages("id")</th>
                             <th>@messages("product")</th>
                             <th>@messages("quantity")</th>
                             <th>@messages("subTotal")</th>
@@ -43,6 +48,7 @@
                     <tbody>
                         @for(child <- children) {
                             <tr>
+                                <td>@child.id</td>
                                 <td>
                                     @restrictOr(roles = List(Array("productShow"))) {
                                        <a href="/product_show/@child.productId">@child.productName
@@ -51,7 +57,7 @@
                                         @child.productName                                    
                                     }
                                 </td>
-                                <td><input type="text" name="quantity" value="@child.quantity"></td>
+                                <td><input type="text" name="quantity" value="@child.quantity" style="width: 100px;"></td>
                                 <td>@child.totalPrice</td>
                                 <td>
                                    @restrict(roles = List(Array("requestRowShow"))) {

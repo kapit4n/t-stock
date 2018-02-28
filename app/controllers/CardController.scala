@@ -172,6 +172,15 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     }
   }
 
+  def updateCardItemsPost = Action.async { request =>
+
+    println("testPost Called");
+    repoRow.updateQuantity( request.body.asFormUrlEncoded.get("id").head.toLong,
+                            request.body.asFormUrlEncoded.get("quantity").head.toInt ).map {
+                              case (result) => Ok("Succeeded");
+                          }
+}
+
   // update required
   def getFinish(id: Long) = LanguageAction.async { implicit request =>
     repo.finishById(id).map {

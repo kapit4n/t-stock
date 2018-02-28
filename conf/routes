@@ -99,6 +99,7 @@ GET     /vendor_add         			controllers.VendorController.addGet
 # Now for insumos or products
 GET     /product_search 				controllers.ProductController.searchProductPost
 GET     /add_card 						controllers.CardController.addCardPost
+POST    /update_cardItems				controllers.CardController.updateCardItemsPost
 GET     /product_show/:id 				controllers.ProductController.show(id: Long)
 GET     /product_update/:id        		controllers.ProductController.getUpdate(id: Long)
 GET     /product_remove/:id        		controllers.ProductController.delete(id: Long)
@@ -228,7 +229,7 @@ POST    /requestRow_update             		controllers.RequestRowController.update
 POST    /requestRow                 		controllers.RequestRowController.add
 GET     /requestRows         				controllers.RequestRowController.getRequestRows
 GET     /requestRowsByParent/:id         	controllers.RequestRowController.getRequestRowsByParent(id: Long)
-GET     /requestRow_list         			controllers.RequestRowController.index
+GET     /requestRows_list         			controllers.RequestRowController.index
 GET     /requestRow_add/:requestId      	controllers.RequestRowController.addGet(requestId: Long)
 
 

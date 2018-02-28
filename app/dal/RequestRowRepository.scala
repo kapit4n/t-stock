@@ -182,6 +182,18 @@ class RequestRowRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,
     db.run(q.update(row.paid + paid, row.credit + credit))
   }
 
+  def updateQuantity(id: Long, quantity: Int) = {
+    var row: RequestRow = new RequestRow(0, 0, 0, "productName", 1,
+      0, 0, 0, 0, 0,
+      0, "status", 0, "measureName")
+    Await.result(getById(id).map { rows =>
+      row = rows(0)
+    }, 100.millis)
+
+    val q = for { c <- tableQ if c.id === id } yield ( c.quantity, c.totalPrice )
+    db.run(q.update(quantity, row.price * quantity ))
+  }
+
   def updateRequestRowDriver(id: Long, paid: Double, credit: Double) = {
     var row: RequestRow = new RequestRow(0, 0, 0, "productName", 1,
       0, 0, 0, 0, 0,
