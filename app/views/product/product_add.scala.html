@@ -1,7 +1,8 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, row: Form[CreateProductForm], measures: Map[String, String], categories: Map[String, String])(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
-
+@import b3.vertical.fieldConstructor
+                                                    
 @main("Add") {
     @examples.templates.nav(handler)
     <div>
@@ -9,19 +10,22 @@
             <a href="/product_list" class="btn btn-primary btn-sm">@messages("toList")</a>
         }
     </div>
-    @form(routes.ProductController.addProduct()) {
-        <div class="container">
-                @inputText(row("name"), 'id -> "name")
-                @inputText(row("cost"), 'id -> "cost")
-                @inputText(row("percent"), 'id -> "percent")
-                @select(field = row("measureId"), options = options(measures), 'id -> "measureId")
-                @inputText(row("stockLimit"), 'id -> "stockLimit")
-                @inputText(row("currentAmount"), 'id -> "currentAmount")
-                @textarea(row("description"), 'rows -> 3, 'cols -> 100, 'id -> "description")
-                @select(field = row("category"), options = options(categories), 'id -> "category")
+        @b3.form(routes.ProductController.addProduct()) {
+            <div class="container">
+                @b3.text(row("name"), '_label -> "name", 'id -> "name")
+                @b3.text(row("cost"), '_label -> "cost", 'id -> "cost")
+                @b3.text(row("percent"), '_label -> "percent", 'id -> "percent")
+                @b3.text(row("stockLimit"), '_label -> "stockLimit", 'id -> "stockLimit")
+                @b3.text(row("currentAmount"), '_label -> "currentAmount", 'id -> "currentAmount")
+                @b3.select(field = row("measureId"), options = options(measures), 'id -> "measureId", '_label -> "measure")
+                @b3.select(field = row("category"), options = options(categories), 'id -> "category", '_label -> "category")
+                @b3.textarea(row("description"), '_label -> "description", 'rows -> 3, 'cols -> 100, 'id -> "description")
                 <br/>
                 <br/>
-                <br/>
+                <button id="addSubmit" type="submit" class="btn btn-primary btn-sm" form="form1">
+                    <span class="glyphicon glyphicon-ok">
+                </button>
+
                <input id="addSubmit" type="submit" class="btn btn-primary btn-sm" value=@messages("save") />
                <a id="cancel" href="/product_list" class="btn btn-info btn-sm">@messages("cancel")</a>
             </div>

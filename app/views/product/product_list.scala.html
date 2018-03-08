@@ -1,22 +1,16 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, rowSearch: Form[SearchProductForm], rows: Seq[Product])(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
-
+@import b3.vertical.fieldConstructor
 
 @main("Add") {
     @examples.templates.nav(handler)
     <div class="container">
         @restrict(roles = List(Array("productCreate"))) {
-                                <a href="/product_add" class="btn btn-primary btn-sm">@messages("new")</a> 
+                                <a href="/product_add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></a> 
         }
         @restrict(roles = List(Array("productList"))) {
             <a href="/product_list" class="btn btn-primary btn-sm">@messages("toListCero")</a>
-        }
-        @restrict(roles = List(Array("productList"))) {
-            <a href="/product_list" class="btn btn-primary btn-sm">@messages("toListOne")</a>
-        }
-        @restrict(roles = List(Array("productList"))) {
-            <a href="/product_list" class="btn btn-primary btn-sm">@messages("toListTwo")</a>
         }
         @restrict(roles = List(Array("productCreate"))) {
                                 <a href="/product_reorder_list" class="btn btn-primary btn-sm">@messages("listReorder")</a> 
@@ -24,9 +18,11 @@
     </div>
 
     <div class="container">
-        @form(routes.ProductController.searchProductPost()) {
-            @inputText(rowSearch("search"))
-            <input type="submit" value=@messages("search") class="btn btn-primary btn-sm"/>
+        @b3.form(routes.ProductController.searchProductPost()) {
+            @b3.text(rowSearch("search"), '_label -> "search")
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-search">
+            </button>
         }
     </div>
 
@@ -52,7 +48,11 @@
                 @for(row <- rows) {
                     <tr>
                         <td></td>
-                        <td>@row.name</td>
+                        <td> @restrict(roles = List(Array("productEdit"))) {
+                                <a href="/product_show/@row.id" class="btn btn-link">@row.name</a> 
+                            }
+                        </td>
+                        
                         <td>@row.cost</td>
                         <td>@row.percent</td>
                         <td>@row.price</td>
@@ -61,13 +61,10 @@
                         <td>@row.currentAmount</td>
                         <td>
                             @restrict(roles = List(Array("productEdit"))) {
-                                <a href="/product_update/@row.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
+                                <a href="/product_update/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></a> 
                             }
                             @restrict(roles = List(Array("productDelete"))) {
-                                <a href="/product_remove/@row.id" class="btn btn-danger btn-sm">@messages("remove")</a>
-                            }
-                            @restrict(roles = List(Array("productShow"))) {
-                                <a href="/product_show/@row.id" class="btn btn-info btn-sm">@messages("view")</a>
+                                <a href="/product_remove/@row.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></a>
                             }
                         </td>
                     </tr>

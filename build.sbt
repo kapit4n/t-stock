@@ -20,7 +20,11 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.177",
   "mysql" % "mysql-connector-java" % "5.1.36",
   specs2 % Test,
-  "be.objectify" %% "deadbolt-scala" % "2.4.1"
+  "be.objectify" %% "deadbolt-scala" % "2.4.1",
+  filters,
+  "org.webjars" % "bootstrap" % "3.3.7",
+  "org.webjars" % "jquery" % "3.2.1",
+  "com.adrianhurt" %% "play-bootstrap" % "1.1.1-P24-B3"
 )
 
 libraryDependencies += "org.webjars" % "chartjs" % "2.6.0"  

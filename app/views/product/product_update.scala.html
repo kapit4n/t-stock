@@ -1,29 +1,31 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, row: Product, rowForm: Form[UpdateProductForm], measures: Map[String, String], categories: Map[String, String])(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
+@import b3.vertical.fieldConstructor
 
 @main("Update") {
     @examples.templates.nav(handler)
     <div class="container">
         @restrict(roles = List(Array("productList"))) {
-            <a href="/product_list" class="btn btn-primary btn-sm">@messages("toList")</a>
+            <a href="/product_list" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></a>
         }
         @restrict(roles = List(Array("productDelete"))) {
-           <a href="/product_remove/@row.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+           <a href="/product_remove/@row.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></a>
         }
     </div>
-    @form(routes.ProductController.updatePost()) {
-        @inputText(rowForm("name"))
-        @inputText(rowForm("cost"))
-        @inputText(rowForm("percent"))
-        @inputText(rowForm("price"))
-        @inputText(rowForm("description"))
-        @select(field = rowForm("measureId"), options = options(measures))
-        @inputText(rowForm("stockLimit"))
-        @inputText(rowForm("currentAmount"))
-        @select(field = rowForm("category"), options = options(categories))
-        <input type="submit" class="btn btn-primary btn-sm" value=@messages("update")/>
-        <a href="/product_show/@row.id" class="btn btn-primary btn-sm">@messages("cancel")</a>
+    @b3.form(routes.ProductController.updatePost()) {
+        @b3.text( rowForm("name"), '_label -> "name", '_help -> "Update product name" )
+        @b3.text( rowForm("cost"), '_label -> "cost", '_help -> "Cost" )
+        @b3.text( rowForm("percent"), '_label -> "percent", '_help -> "Percent" )
+        @b3.text( rowForm("price"), '_label -> "price", '_help -> "Price" )
+        @b3.text( rowForm("stockLimit"), '_label -> "stockLimit", '_help -> "Stock Limit" )
+        @b3.text( rowForm("currentAmount"), '_label -> "currentAmount", '_help -> "Current Amount" )
+        @b3.select(field = rowForm("measureId"), options = options(measures))
+        @b3.select(field = rowForm("category"), options = options(categories))
+        @b3.textarea( rowForm("description"), '_label -> "description", '_help -> "Descr" )
+        <button type="submit" class="btn btn-primary btn-sm" form="form1"><span class="glyphicon glyphicon-ok"></input></button>
+
+        <a href="/product_show/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-step-backward"></a>
         @inputText(rowForm("id"), 'hidden -> "true", '_label -> "")
     }
 }

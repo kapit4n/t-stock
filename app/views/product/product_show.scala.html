@@ -2,23 +2,24 @@
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
 
+
 @main("view") {
     @examples.templates.nav(handler)
     <div class="container">
         @restrict(roles = List(Array("productList"))) {
-            <a href="/product_list" class="btn btn-primary btn-sm">@messages("toList")</a>
+            <a href="/product_list" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-list"></a>
         }
         @restrict(roles = List(Array("productEdit"))) {
-           <a href="/product_update/@row.id" class="btn btn-primary btn-sm">@messages("edit")</a>
+           <a href="/product_update/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></a>
         }
         @restrict(roles = List(Array("productEdit"))) {
-           <a href="/productTransform_add/@row.id" class="btn btn-primary btn-sm">@messages("transform")</a>
+           <a href="/productTransform_add/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-send"></a>
         }
         @restrict(roles = List(Array("productDelete"))) {
-           <a href="/product_remove/@row.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+           <a href="/product_remove/@row.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></a>
         }
     </div>
-    <div class="container">
+    <div>
         <div >
             <div>
                 <div style="display: inline-block;">@messages("name"): </div>
@@ -54,15 +55,16 @@
             </div>
             
         </div>
-        <div class="container">
+        <div>
             <img src="@routes.Assets.versioned("images/@(row.id)_product.jpg")" width="200">
             @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {
                 <input type="file" name="picture">
                 <input type="submit">
             }
         </div>
-        <div class="container">
-                <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm">@messages("addInventory")</a> </div>
+        <div>
+
+                <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> </span>@messages("Inventory")</a> </div>
             </div>
             <div class="table table-bordered">
                 <table class="table table-bordered" id="rows">
@@ -117,11 +119,11 @@
                 </table>
             </div>
 
-            <div class="container">
+            <div>
                 <div class="row">
                     <div class="col-sm-6 col-md-6">
-                            <div class="container">
-                                <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm">@messages("assignedVendors")</a>
+                            <div>
+                                <div style="display: inline-block;">@messages("assignedVendors")
                                 </div>
                             </div>
                             <div class="table table-bordered">
@@ -153,8 +155,8 @@
                             </div>
                     </div>
                     <div class="col-sm-6 col-md-6">
-                         <div class="container">
-                            <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm">@messages("availableVendors")</a>
+                         <div>
+                            <div style="display: inline-block;">@messages("availableVendors")
                             </div>
                         </div>
                         <div class="table table-bordered">
