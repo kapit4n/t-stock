@@ -264,8 +264,9 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       val type1 = filename.substring(filename.length - 4);
       val contentType = picture.contentType
       val fileNewName = id.toString() + "_product" + type1
-      //val path_1 = "/home/llll/Desktop/projects/isystem/public/images/"
-      val path_1 = "public/images/"
+      val path_1 = "/home/larce/projects/t-stock/app/assets/images/"
+      //val path_1 = "/home/larce/projects/t-stock/public/images/"
+      //val path_1 = "public/images/"
       try {
         new File(s"$path_1$fileNewName").delete()
       } catch {

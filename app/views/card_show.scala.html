@@ -86,15 +86,17 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6" style="background: white;">
+        <div class="col-md-6 col-sm-12" style="background: white;">
             @for(product <- products) {
-                @form(routes.CardController.addCardPost()) {
-                    <div class="col-md-2" style="background: white; height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px;">
-                        <span style="width: 20px; font-size: 10px;">@product._2</span>
-                        @inputText(addCardRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
-                        <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-                    </div>
-                }                
+                <div style=''>
+                    @form(routes.CardController.addCardPost()) {
+                        <div class="col-md-2 col-sm-3" style='background-image: url("http://localhost:8081/assets/images/@(product._1)_product.jpg"); height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px; background-size: 100px 100px;'>
+                            <span style="width: 20px; font-size: 10px;">@product._2</span>
+                            @inputText(addCardRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
+                            <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                        </div>
+                    }
+                </div>
             }
         </div>
     </div class="row">

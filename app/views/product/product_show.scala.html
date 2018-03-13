@@ -19,13 +19,20 @@
            <a href="/product_remove/@row.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></a>
         }
     </div>
-    <div>
-        <div >
-            <div>
-                <div style="display: inline-block;">@messages("name"): </div>
-                <span style="display: inline-block;" id="name">@row.name</span>
-            </div>
-            <div>
+
+    <div class="card container">
+
+        <!--Card image-->
+        <img class="img-fluid col-sm-7 col-md-4 col-xs-12" src="/assets/images/@(row.id)_product.jpg")" alt="Card image cap">
+
+        <!--Card content-->
+        <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">@row.name</h4>
+            <!--Text-->
+            <p class="card-text">
+                
+                <div>
                 <div style="display: inline-block;">@messages("cost"): </div>
                 <div style="display: inline-block;" id="cost">@row.cost</div>
             </div>
@@ -53,20 +60,20 @@
                 <div style="display: inline-block;">@messages("inStock"): </div>
                 <div style="display: inline-block;" id="currentAmount">@row.currentAmount</div>
             </div>
-            
-        </div>
-        <div>
-            <img src="@routes.Assets.versioned("images/@(row.id)_product.jpg")" width="200">
-            @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {
-                <input type="file" name="picture">
-                <input type="submit">
-            }
-        </div>
-        <div>
-
-                <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> </span>@messages("Inventory")</a> </div>
+            <div>
+                <img src="@routes.Assets.versioned("images/@(row.id)_product.jpg")" width="200">
+                @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {
+                    <input type="file" name="picture">
+                    <input type="submit">
+                }
             </div>
-            <div class="table table-bordered">
+
+            </p>
+            <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> </span>@messages("Inventory")</a> </div>
+        </div>
+
+    </div>
+
                 <table class="table table-bordered" id="rows">
                     <thead>
                         <tr>
@@ -117,11 +124,10 @@
                         }
                     </tbody>
                 </table>
-            </div>
 
             <div>
                 <div class="row">
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-12 col-md-6">
                             <div>
                                 <div style="display: inline-block;">@messages("assignedVendors")
                                 </div>
@@ -154,7 +160,7 @@
                                 </table>
                             </div>
                     </div>
-                    <div class="col-sm-6 col-md-6">
+                    <div class="col-sm-12 col-md-6">
                          <div>
                             <div style="display: inline-block;">@messages("availableVendors")
                             </div>
