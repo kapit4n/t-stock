@@ -23,7 +23,7 @@
         @b3.select(field = rowForm("measureId"), options = options(measures))
         @b3.select(field = rowForm("category"), options = options(categories))
         @b3.textarea( rowForm("description"), '_label -> "description", '_help -> "Descr" )
-        <button type="submit" class="btn btn-primary btn-sm" form="form1"><span class="glyphicon glyphicon-ok"></input></button>
+        <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-ok"></input></button>
 
         <a href="/product_show/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-step-backward"></a>
         @inputText(rowForm("id"), 'hidden -> "true", '_label -> "")

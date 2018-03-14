@@ -136,6 +136,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 
   // to copy
   def show(id: Long) = LanguageAction.async { implicit request =>
+    productList = getProductList()
     val requestRows = getChildren(id)
     unidades = getMeasuresMap()
     productTuples = getProductTuples()
