@@ -22,9 +22,14 @@
 
     <div class="card container">
 
-        <!--Card image-->
-        <img class="img-fluid col-sm-7 col-md-4 col-xs-12" src="/assets/images/@(row.id)_product.jpg")" alt="Card image cap">
-
+        <div class="col-sm-7 col-md-4">
+            <img class="img-fluid col-sm-12 col-md-12" src="/assets/images/@(row.id)_product.jpg")" alt="Card image cap">
+            @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {
+                <label for="picture" class="btn" style="display: inline;"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Select Image</label>
+                <input id="picture"  type="file" name="picture" style="visibility:hidden; display: inline; width: 0;" >
+                <input type="submit" class="btn btn-default" value="Save Image" style="display: inline;">
+            }
+        </div>
         <!--Card content-->
         <div class="card-body">
             <!--Title-->
@@ -60,140 +65,123 @@
                 <div style="display: inline-block;">@messages("inStock"): </div>
                 <div style="display: inline-block;" id="currentAmount">@row.currentAmount</div>
             </div>
-            <div>
-                <img src="@routes.Assets.versioned("images/@(row.id)_product.jpg")" width="200">
-                @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {
-                    <input type="file" name="picture">
-                    <input type="submit">
-                }
-            </div>
 
             </p>
-            <div style="display: inline-block;"><a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"> </span>@messages("Inventory")</a> </div>
+
         </div>
 
     </div>
 
-                <table class="table table-bordered" id="rows">
-                    <thead>
-                        <tr>
-                            <th>@messages("vendor")</th>
-                            <th>@messages("measure")</th>
-                            <th>@messages("quantity")</th>
-                            <th>@messages("inStock")</th>
-                            @restrict(roles = List(Array("productInv"))) {
-                                <th>-----------</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(child <- children) {
-                            <tr>
-                                <td>
-                                    @restrictOr(roles = List(Array("vendorShow"))) {
-                                       <a href="/vendor_show/@child.vendorId">@child.vendorName
-                                    </a> 
-                                    }{
-                                        @child.vendorName                                    
-                                    }
-                                </td>
-                                <td>
-                                    @restrictOr(roles = List(Array("measureShow"))) {
-                                       <a href="/measure_show/@child.measureId">@child.measureName
-                                    </a> 
-                                    }{
-                                        @child.measureName                                    
-                                    }
-                                </td>
-                                <td>@child.amount</td>
-                                <td>@child.amountLeft</td>
-                                @restrict(roles = List(Array("productInv"))) {
-                                    <td>
-                                       @restrict(roles = List(Array("productInvEdit"))) {
-                                           <a href="/productInv_update/@child.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
-                                       }
-                                       @restrict(roles = List(Array("productInvDelete"))) {
-                                           <a href="/productInv_remove/@child.id" class="btn btn-danger btn-sm">@messages("remove")</a>
-                                       }
-                                       @restrict(roles = List(Array("productInvShow"))) {
-                                           <a href="/productInv_show/@child.id" class="btn btn-info btn-sm">@messages("view")</a>
-                                       }
-                                   </td> 
-                               }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+    <div style="display: inline-block;">
+        <a href="/productInvs_add/@row.id" class="btn btn-primary btn-sm">
+        <span class="glyphicon glyphicon-plus"> </span>@messages("Inventory")</a>
+    </div>
 
-            <div>
-                <div class="row">
-                    <div class="col-sm-12 col-md-6">
-                            <div>
-                                <div style="display: inline-block;">@messages("assignedVendors")
-                                </div>
-                            </div>
-                            <div class="table table-bordered">
-                                <table class="table table-bordered" id="rows">
-                                    <thead>
-                                        <tr>
-                                            <th>@messages("vendorName")</th>
-                                            @restrict(roles = List(Array("productEdit"))) {
-                                                <th>-----------</th>
-                                            }
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @for(assignedVendor <- vendorsByProduct) {
-                                            <tr>
-                                                </td>
-                                                <td>@assignedVendor.name</td>
-                                                @restrict(roles = List(Array("role"))) {
-                                                    <td>
-                                                       @restrict(roles = List(Array("productEdit"))) {
-                                                           <a href="/vendor_remove/@row.id/@assignedVendor.id" class="btn btn-danger btn-sm">@messages("remove")</a> 
-                                                       }
-                                                   </td> 
-                                               }
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+    <table class="table table-bordered" id="rows">
+        <thead>
+            <tr>
+                <th>@messages("vendor")</th>
+                <th>@messages("measure")</th>
+                <th>@messages("quantity")</th>
+                <th>@messages("inStock")</th>
+                @restrict(roles = List(Array("productInv"))) {
+                    <th>-----------</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for(child <- children) {
+                <tr>
+                    <td>
+                        @restrictOr(roles = List(Array("vendorShow"))) {
+                           <a href="/vendor_show/@child.vendorId">@child.vendorName
+                        </a> 
+                        }{
+                            @child.vendorName                                    
+                        }
+                    </td>
+                    <td>
+                        @restrictOr(roles = List(Array("measureShow"))) {
+                           <a href="/measure_show/@child.measureId">@child.measureName
+                        </a> 
+                        }{
+                            @child.measureName                                    
+                        }
+                    </td>
+                    <td>@child.amount</td>
+                    <td>@child.amountLeft</td>
+                    @restrict(roles = List(Array("productInv"))) {
+                        <td>
+                           @restrict(roles = List(Array("productInvEdit"))) {
+                               <a href="/productInv_update/@child.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
+                           }
+                           @restrict(roles = List(Array("productInvDelete"))) {
+                               <a href="/productInv_remove/@child.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+                           }
+                           @restrict(roles = List(Array("productInvShow"))) {
+                               <a href="/productInv_show/@child.id" class="btn btn-info btn-sm">@messages("view")</a>
+                           }
+                       </td> 
+                   }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                    <div>
+                        <div style="display: inline-block;">@messages("assignedVendors")
+                        </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
-                         <div>
-                            <div style="display: inline-block;">@messages("availableVendors")
-                            </div>
-                        </div>
-                        <div class="table table-bordered">
-                            <table class="table table-bordered" id="rows">
-                                <thead>
+                    <div class="table table-bordered">
+                        <table class="table table-bordered" id="rows">
+                            <thead>
+                                <tr>
+                                    <th>@messages("vendorName")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for(assignedVendor <- vendorsByProduct) {
                                     <tr>
-                                        <th>@messages("vendorName")</th>
-                                        @restrict(roles = List(Array("productEdit"))) {
-                                            <th>-----------</th>
-                                        }
+                                        <td>
+                                            <a href="/vendor_remove/@row.id/@assignedVendor.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
+                                            @assignedVendor.name
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @for(vendor <- vendors) {
-                                        <tr>
-                                            </td>
-                                            <td>@vendor.name</td>
-                                            @restrict(roles = List(Array("role"))) {
-                                                <td>
-                                                   @restrict(roles = List(Array("productEdit"))) {
-                                                       <a href="/vendor_assign/@row.id/@vendor.id" class="btn btn-primary btn-sm">@messages("add")</a> 
-                                                   }
-                                               </td> 
-                                           }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                 <div>
+                    <div style="display: inline-block;">@messages("availableVendors")
                     </div>
                 </div>
+                <div class="table table-bordered">
+                    <table class="table table-bordered" id="rows">
+                        <thead>
+                            <tr>
+                                <th>@messages("vendorName")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(vendor <- vendors) {
+                                <tr>
+                                    </td>
+                                    <td>@restrict(roles = List(Array("productEdit"))) {
+                                               <a href="/vendor_assign/@row.id/@vendor.id" class="btn btn-primary btn-sm"> &#x25C5; </a> 
+                                           } @vendor.name</td>
+                                   
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
+        </div>
     </div>
+</div>
 }
