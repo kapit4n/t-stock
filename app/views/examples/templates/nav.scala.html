@@ -1,9 +1,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
-
-<div class="row">
-  <nav>
+  <nav style="padding: 0; border: 0; margin: 0; width: 100%;">
      <ul>
         <li><a href="/profile">@messages("profile")</a></li>
         <li><a href="/card_show/1">@messages("card")</a></li>
@@ -129,7 +127,4 @@
      </ul>
   </nav>
 
-  <div class="container">
-  <a href="/logout">@messages("singOut")</a>
-</div>
-</div>
+  <a href="/logout">@messages("singOut")</a> <br>

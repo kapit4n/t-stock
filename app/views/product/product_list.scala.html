@@ -4,8 +4,8 @@
 @import b3.vertical.fieldConstructor
 
 @main("Add") {
+    <div>
     @examples.templates.nav(handler)
-    <div class="container">
         @restrict(roles = List(Array("productCreate"))) {
                                 <a href="/product_add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></a> 
         }
@@ -17,7 +17,7 @@
         }
     </div>
 
-    <div class="container">
+    <div>
         @b3.form(routes.ProductController.searchProductPost()) {
             @b3.text(rowSearch("search"), '_label -> "search")
             <button type="submit" class="btn btn-primary">
@@ -26,9 +26,8 @@
         }
     </div>
 
-    <div class="container">
+    <div>
         @messages("productList")
-    </div>
     <div class="table table-bordered">
         <table class="table table-bordered conted" id="rows">
             <thead>
@@ -75,6 +74,7 @@
             </tfoot>
         </table>
         <script type='text/javascript' src='@routes.Assets.versioned("javascripts/product_index.js")'></script>
+    </div>
 
     </div>
 }
