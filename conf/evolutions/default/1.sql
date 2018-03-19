@@ -35,7 +35,7 @@ create table company (
 );
 
 create table category (
-  name TEXT NOT NULL PRIMARY KEY,
+  name VARCHAR(80) NOT NULL PRIMARY KEY,
   description TEXT
 );
 

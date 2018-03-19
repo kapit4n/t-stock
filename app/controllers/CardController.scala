@@ -22,7 +22,7 @@ import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
 class CardController @Inject() (repo: ProductRequestRepository, repoProducts: ProductRepository,
-  repoRow: RequestRowRepository, repoVete: UserRepository,
+  repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
   repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
   val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
@@ -44,6 +44,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   var storeNames = getStorekeepersNamesMap()
   var productTuples = getProductTuples()
   var productList = getProductList()
+  var categoryList = getCategoryList()
   var requestObj = ProductRequest(0, "", 0, "", 0, "", "", "", "", 0, "")
   var unidades: Map[String, String] = _
 
@@ -144,7 +145,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 
     repo.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, productTuples, totalPrice))
+      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, productTuples, categoryList, totalPrice))
     }
   }
 
@@ -258,6 +259,13 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     Await.result(repoProducts.list().map {
       case (productList) =>
         productList
+    }, 3000.millis)
+  }
+
+  def getCategoryList(): Seq[Category] = {
+    Await.result(repoCategory.list().map {
+      case (categoryList) =>
+        categoryList
     }, 3000.millis)
   }
 

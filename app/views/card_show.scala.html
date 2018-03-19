@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCardRow: Form[AddCardForm], products: Seq[(Long, String)], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCardRow: Form[AddCardForm], products: Seq[(Long, String)], categories: Seq[Category], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
 
@@ -87,6 +87,11 @@
             </div>
         </div>
         <div class="col-md-6 col-sm-12" style="background: white;">
+            <div class="">
+                @for(category <- categories) {
+                    <div style="display: inline-block;">Category 1</div>
+                }
+            </div>
             @for(product <- products) {
                 <div style=''>
                     @form(routes.CardController.addCardPost()) {
