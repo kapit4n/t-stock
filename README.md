@@ -21,9 +21,9 @@ Hi Stock is a system that will help us to manage the stock in the an industry th
 * Open the application with sublime
 
 ## mockup card show page
-![Inventory](https://bytebucket.org/lartl/t-stock/raw/85f26b9242d3fe10ff369b96769d63c8ef40f669/mockups/t_stock_shopping_card.png?token=1345fa2baa742bffa31e65359cf8e3e15ced300e)
+![Shopping Card](https://bytebucket.org/lartl/t-stock/raw/4af8837d28a9d2362b07a8e826c74a5a7192ddca/mockups/t_stock_shopping_card.png?token=70567480360d55b9d964a3cff675deb72414a46c)
 ## mockup
-![Inventory](https://bytebucket.org/lartl/t-stock/raw/f1a789ec25579e402cac5c66bf33bd158f2d4d66/mockups/t_stock_inventory.png?token=40c1ec95911250c61d3ab0ba7637ee9102eb73bc)
+![Product View](https://bytebucket.org/lartl/t-stock/raw/4af8837d28a9d2362b07a8e826c74a5a7192ddca/mockups/t_stock_product_view.png?token=9b9d83e183987520dbdbe323bd2f008c83dde581)
 
 
 ## Load dependencies with activator
