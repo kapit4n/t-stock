@@ -63,6 +63,10 @@ class ProductRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,
     tableQ.filter(x => x.stockLimit > x.currentAmount).result
   }
 
+  def listByCategory(category: String): Future[Seq[Product]] = db.run {
+    tableQ.filter(x => x.category === category).result
+  }
+
   def getListNames(): Future[Seq[(Long, String)]] = db.run {
     tableQ.take(300).map(s => (s.id, s.name)).result
   }

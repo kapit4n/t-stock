@@ -13,9 +13,10 @@ INSERT INTO company(id, name) VALUES
 ('10006','ALVA'),
 ('10007','AMLECO');
 
-INSERT INTO company(name, description) VALUES
+INSERT INTO category(name, description) VALUES
 ('MILK','Description of MILK'),
 ('GADGETS','Description OF GADGETS');
+
 
 INSERT INTO customer VALUES 
   (1, 'Daniel Campos', 22333, 22333, 'Address', '2225','Company Name 1', 'status', 0, '2016-06-17 23:53:08');

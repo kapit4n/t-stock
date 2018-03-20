@@ -1,9 +1,8 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCardRow: Form[AddCardForm], products: Seq[(Long, String)], categories: Seq[Category], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCardRow: Form[AddCardForm], filterByCategoryForm: Form[FilterByCategoryForm], products: Seq[(Long, String)], categories: Seq[Category], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
 
 @main("view") {
-    @examples.templates.nav(handler)
 
     <div class="container">
 
@@ -18,7 +17,7 @@
                         console.log(data);
                     });
                 });
-            });           
+            });                             
         </script>
 
         @restrict(roles = List(Array("productRequestList"))) {
@@ -51,7 +50,8 @@
                                 <td>@child.id</td>
                                 <td>
                                     @restrictOr(roles = List(Array("productShow"))) {
-                                       <a href="/product_show/@child.productId">@child.productName
+                                        <a href="/product_show/@child.productId">@child.productName
+
                                     </a>
                                     }{
                                         @child.productName                                    
@@ -89,7 +89,12 @@
         <div class="col-md-6 col-sm-12" style="background: white;">
             <div class="">
                 @for(category <- categories) {
-                    <div style="display: inline-block;">Category 1</div>
+                    <div style="display: inline-block;">
+                    @form(routes.CardController.filterByCategoryPost()) {
+                        @inputText(addCardRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
+                        <button type="submit" class="btn btn-primary">@category.name</button>
+                    }
+                </div>
                 }
             </div>
             @for(product <- products) {

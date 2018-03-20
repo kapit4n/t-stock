@@ -21,7 +21,6 @@
     </div>
 
     <div class="card container">
-
         <div class="col-sm-7 col-md-4">
             <img class="img-fluid col-sm-12 col-md-12" src="/assets/images/@(row.id)_product.jpg")" alt="Card image cap">
             @helper.form(action = routes.ProductController.upload(row.id), 'enctype -> "multipart/form-data") {

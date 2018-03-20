@@ -40,6 +40,11 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       "id" -> nonEmptyText)(AddCardForm.apply)(AddCardForm.unapply)
   }
 
+  val filterByCategoryForm: Form[FilterByCategoryForm] = Form {
+    mapping(
+      "categoryName" -> nonEmptyText)(FilterByCategoryForm.apply)(FilterByCategoryForm.unapply)
+  }
+
   var employeesNames = getEmployeeListNamesMap()
   var storeNames = getStorekeepersNamesMap()
   var productTuples = getProductTuples()
@@ -47,6 +52,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   var categoryList = getCategoryList()
   var requestObj = ProductRequest(0, "", 0, "", 0, "", "", "", "", 0, "")
   var unidades: Map[String, String] = _
+  var category = ""
 
   def getMeasuresMap(): Map[String, String] = {
     Await.result(repoUnit.getListNames().map {
@@ -145,7 +151,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 
     repo.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, productTuples, categoryList, totalPrice))
+      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
     }
   }
 
@@ -240,19 +246,35 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   }
 
   def getProductTuples(): Seq[(Long, String)] = {
-    Await.result(repoProducts.list().map {
-      case (productList) =>
-        productList.map {
-          case (product) => 
-            (
-              product.id, 
-              if(product.name.length() > 10 ) 
-                product.name.slice(0,10) + ".."
-              else 
-                product.name 
-            )
-        }
-    }, 3000.millis)
+    if (this.category == "") {
+      Await.result(repoProducts.list().map {
+        case (productList) =>
+          productList.map {
+            case (product) => 
+              (
+                product.id, 
+                if(product.name.length() > 10 ) 
+                  product.name.slice(0,10) + ".."
+                else 
+                  product.name 
+              )
+          }
+      }, 3000.millis)
+    } else {
+      Await.result(repoProducts.listByCategory(this.category).map {
+        case (productList) =>
+          productList.map {
+            case (product) => 
+              (
+                product.id, 
+                if(product.name.length() > 10 ) 
+                  product.name.slice(0,10) + ".."
+                else 
+                  product.name 
+              )
+          }
+      }, 3000.millis)
+    }
   }
 
   def getProductList(): Seq[Product] = {
@@ -307,6 +329,17 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       })
   }
 
+  def filterByCategoryPost = LanguageAction.async { implicit request =>
+    filterByCategoryForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Redirect(routes.CardController.show(1)))
+      },
+      res => {
+        this.category = res.categoryName
+        Future.successful(Redirect(routes.CardController.show(1)))
+      })
+  }
+
 
   // update required
   def updatePost = LanguageAction.async { implicit request =>
@@ -327,6 +360,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
 }
 
 case class AddCardForm(id: String)
+
+case class FilterByCategoryForm(categoryName: String)
 
 //case class CreateProductRequestForm(date: String, employee: Long, storekeeper: Long, status: String, detail: String)
 
