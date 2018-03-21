@@ -163,6 +163,15 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       "category" -> text)(UpdateProductForm.apply)(UpdateProductForm.unapply)
   }
 
+  val updateProductVendorForm: Form[UpdateProductVendorForm] = Form {
+    mapping(
+      "id" -> longNumber,
+      "productId" -> longNumber,
+      "vendorId" -> longNumber,
+      "cost" -> of[Double]
+      )(UpdateProductVendorForm.apply)(UpdateProductVendorForm.unapply)
+  }
+
   def getChildren(id: Long): Seq[ProductInv] = {
     Await.result(repoProdInv.listByProductId(id).map { res =>
       res
@@ -209,7 +218,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     repo.getById(id).map { res =>
       updatedRow = res(0)
-      val anyData = Map(
+      val productData = Map(
         "id" -> id.toString().toString(),
         "name" -> updatedRow.name,
         "cost" -> updatedRow.cost.toString(),
@@ -221,7 +230,23 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
         "currentAmount" -> updatedRow.currentAmount.toString(),
         "stockLimit" -> updatedRow.stockLimit.toString(),
         "category" -> updatedRow.category.toString())
-      Ok(views.html.product.product_update(new MyDeadboltHandler, updatedRow, updateForm.bind(anyData), measures, categories))
+
+      Ok(views.html.product.product_update(new MyDeadboltHandler, updatedRow, updateForm.bind(productData), measures, categories))
+    }
+  }
+
+  var updatedProductVendorRow: ProductVendor = _
+
+  def getProductVendorUpdate(productId: Long, vendorId: Long) = LanguageAction.async { implicit request =>
+    repoProductVendor.getProductVendorById(productId, vendorId).map { res =>
+      updatedProductVendorRow = res(0)
+      val productVendorData = Map(
+        "id" -> updatedProductVendorRow.id.toString().toString(),
+        "cost" -> updatedProductVendorRow.cost.toString(),
+        "productId" -> updatedProductVendorRow.productId.toString(),
+        "vendorId" -> updatedProductVendorRow.vendorId.toString())
+
+      Ok(views.html.product.productVendor_update(new MyDeadboltHandler, updatedProductVendorRow, updateProductVendorForm.bind(productVendorData)))
     }
   }
 
@@ -253,6 +278,21 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
             Redirect(routes.ProductController.show(res.id))
+          }
+      })
+  }
+
+  def updateProductVendorPost = LanguageAction.async { implicit request =>
+    updateProductVendorForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok(views.html.product.productVendor_update(new MyDeadboltHandler, updatedProductVendorRow, errorForm)))
+      },
+      res => {
+        repoProductVendor.update(
+          res.id, res.cost,
+          request.session.get("userId").get.toLong,
+          request.session.get("userName").get.toString).map { _ =>
+            Redirect(routes.ProductController.show(res.productId))
           }
       })
   }
@@ -292,3 +332,7 @@ case class UpdateProductForm(
   id: Long, name: String, cost: Double,
   percent: Double, price: Double, description: String,
   measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
+
+case class UpdateProductVendorForm(
+  id: Long, productId: Long, vendorId: Long, cost: Double)
+

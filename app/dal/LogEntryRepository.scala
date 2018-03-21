@@ -26,6 +26,7 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
   val MEASURE = "Unit of Measure"
   val MODULE = "Modulo"
   val PRODUCT = "Product"
+  val PRODUCT_VENDOR = "Product Cost"
   val PRODUCT_INV = "Income de Product"
   val PRODUCT_REQUEST = "Order"
   val PRODUCT_REQUEST_BY_INSUMO = "Order"

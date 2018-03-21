@@ -210,7 +210,8 @@ create table userRole (
 create table productVendor (
   id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   productId INT,
-  vendorId INT
+  vendorId INT,
+  cost double  DEFAULT 0
 );
 
 create table roles (

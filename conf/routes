@@ -102,11 +102,14 @@ GET     /add_card 						controllers.CardController.addCardPost
 POST    /update_cardItems				controllers.CardController.updateCardItemsPost
 POST    /filter_byCategory				controllers.CardController.filterByCategoryPost
 GET     /product_show/:id 				controllers.ProductController.show(id: Long)
-GET     /product_update/:id        		controllers.ProductController.getUpdate(id: Long)
 GET     /product_remove/:id        		controllers.ProductController.delete(id: Long)
 GET     /products/:id 					controllers.ProductController.getById(id: Long)
+GET     /product_update/:id        		controllers.ProductController.getUpdate(id: Long)
 POST    /product_update             	controllers.ProductController.updatePost
 POST    /productUpload/:id             	controllers.ProductController.upload(id: Long)
+
+GET     /productVendor_update/:productId/:vendorId   controllers.ProductController.getProductVendorUpdate(productId: Long, vendorId: Long)
+POST    /productVendor_update           controllers.ProductController.updateProductVendorPost
 
 POST    /product                 		controllers.ProductController.addProduct
 GET     /products         				controllers.ProductController.getProducts

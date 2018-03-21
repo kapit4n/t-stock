@@ -138,13 +138,14 @@
                         <table class="table table-bordered" id="rows">
                             <thead>
                                 <tr>
-                                    <th>@messages("vendorName")</th>
+                                    <th> @messages("vendorName")</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @for(assignedVendor <- vendorsByProduct) {
                                     <tr>
                                         <td>
+                                            <a href="/productVendor_update/@row.id/@assignedVendor.id" class="btn btn-primary btn-sm">Edit </a>
                                             <a href="/vendor_remove/@row.id/@assignedVendor.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
                                             @assignedVendor.name
                                         </td>

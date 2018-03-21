@@ -16,7 +16,8 @@ import scala.concurrent.{ Future, ExecutionContext, Await }
  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
  */
 @Singleton
-class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,
+        repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -26,15 +27,16 @@ class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvide
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def productId = column[Long]("productId")
     def vendorId = column[Long]("vendorId")
-    def * = (id, productId, vendorId) <> ((ProductVendor.apply _).tupled, ProductVendor.unapply)
+    def cost = column[Double]("cost")
+    def * = (id, productId, vendorId, cost) <> ((ProductVendor.apply _).tupled, ProductVendor.unapply)
   }
 
   private val tableProductVendor = TableQuery[ProductVendorsTable]
 
   def createProductVendor(productId: Long, vendorId: Long): Future[ProductVendor] = db.run {
-    (tableProductVendor.map(p => (p.productId, p.vendorId))
+    (tableProductVendor.map(p => (p.productId, p.vendorId, p.cost))
       returning tableProductVendor.map(_.id)
-      into ((nameAge, id) => ProductVendor(id, nameAge._1, nameAge._2))) += (productId, vendorId)
+      into ((nameAge, id) => ProductVendor(id, nameAge._1, nameAge._2, nameAge._3))) += (productId, vendorId, 0)
   }
 
   def getVendorsIds(id: Long): Seq[Long] = {
@@ -52,8 +54,8 @@ class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvide
   }
 
   // to cpy
-  def getProductVendorById(id: Long): Future[Seq[ProductVendor]] = db.run {
-    tableProductVendor.filter(_.id === id).result
+  def getProductVendorById(productId: Long, vendorId: Long): Future[Seq[ProductVendor]] = db.run {
+    tableProductVendor.filter(p => p.productId === productId && p.vendorId === vendorId).result
   }
 
   // delete required
@@ -64,4 +66,13 @@ class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvide
 
     tableProductVendor.result
   }
+
+  def update(id: Long, cost: Double, userId: Long, userName: String): Future[Seq[ProductVendor]] = db.run {
+    repoLog.createLogEntry(repoLog.UPDATE, repoLog.PRODUCT_VENDOR, userId, userName, cost.toString())
+
+    val q = for { c <- tableProductVendor if c.id === id } yield c.cost
+    db.run(q.update(cost))
+    tableProductVendor.filter(_.id === id).result
+  }
+
 }

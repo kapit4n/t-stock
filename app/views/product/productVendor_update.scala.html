@@ -1,0 +1,21 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, row: ProductVendor, rowForm: Form[UpdateProductVendorForm])(implicit messages: Messages, request: Request[Any])
+@import be.objectify.deadbolt.scala.views.html._
+@import helper._
+@import b3.vertical.fieldConstructor
+
+@main("Update") {
+    @examples.templates.nav(handler)
+    @b3.form(routes.ProductController.updateProductVendorPost()) {
+        @b3.text( rowForm("cost"), '_label -> "cost", '_help -> "Cost" )
+        @b3.text(field = rowForm("vendorId"))
+        @b3.text(field = rowForm("productId"))
+        <button type="submit" class="btn btn-primary btn-sm">
+            <span class="glyphicon glyphicon-ok"></span>
+        </button>
+
+        <a href="/product_show/@row.productId" class="btn btn-primary btn-sm">
+            <span class="glyphicon glyphicon-step-backward"></span>
+        </a>
+        @inputText(rowForm("id"), 'hidden -> "true", '_label -> "")
+    }
+}
