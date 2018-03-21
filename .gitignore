@@ -3,5 +3,6 @@ logs/
 RUNNING_PID
 *.jar
 .sbtserver/
-project/
+project/project
+project/target
 target/
