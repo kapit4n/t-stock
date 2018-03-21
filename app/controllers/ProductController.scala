@@ -289,7 +289,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       },
       res => {
         repoProductVendor.update(
-          res.id, res.cost,
+          res.productId, res.cost,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
             Redirect(routes.ProductController.show(res.productId))
