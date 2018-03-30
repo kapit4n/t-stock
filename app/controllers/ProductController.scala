@@ -1,26 +1,23 @@
 package controllers
 
-import play.api._
 import play.api.mvc._
 import play.api.i18n._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import play.api.data.format.Formats._
 import scala.concurrent.duration._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import javax.inject._
-import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 import models._
 import dal._
 
 /** Product controller to handler product routes and operations on it */
-class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRepository,
+class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRepository,
                                   repoProductVendor: ProductVendorRepository, repoProdInv: ProductInvRepository,
-                              repoUnit: MeasureRepository, val messagesApi: MessagesApi)
-                              (implicit ec: ExecutionContext) extends Controller with I18nSupport {
+                                  repoUnit: MeasureRepository, val messagesApi: MessagesApi)
+                                 (implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   /** Form to create a new Product */
   val newForm: Form[CreateProductForm] = Form {
@@ -57,7 +54,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -101,8 +98,8 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
 
   /** List page */
   def list = LanguageAction { implicit request =>
-    
-    
+
+
     Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
   }
 
@@ -121,8 +118,8 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
           res.category,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.ProductController.show(resNew.id))
-          }
+          Redirect(routes.ProductController.show(resNew.id))
+        }
       })
   }
 
@@ -184,10 +181,10 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       "productId" -> longNumber,
       "vendorId" -> longNumber,
       "cost" -> of[Double]
-      )(UpdateProductVendorForm.apply)(UpdateProductVendorForm.unapply)
+    )(UpdateProductVendorForm.apply)(UpdateProductVendorForm.unapply)
   }
 
- /** Get Products that has been bought */
+  /** Get Products that has been bought */
   def getChildren(id: Long): Seq[ProductInv] = {
     Await.result(repoProdInv.listByProductId(id).map { res =>
       res
@@ -252,7 +249,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       Ok(views.html.product.product_update(new MyDeadboltHandler, updatedRow, updateForm.bind(productData), measures, categories))
     }
   }
-  
+
   /** Renders the product vendor relation to set the cost of the product for that vendor */
   def getProductVendorUpdate(productId: Long, vendorId: Long) = LanguageAction.async { implicit request =>
     repoProductVendor.getProductVendorById(productId, vendorId).map { res =>
@@ -274,7 +271,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }
   }
 
-  /** Gets product by id on json format*/
+  /** Gets product by id on json format */
   def getById(id: Long) = LanguageAction.async {
     repo.getById(id).map { res =>
       Ok(Json.toJson(res))
@@ -294,12 +291,12 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
           res.currentAmount, res.stockLimit, res.category,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.ProductController.show(res.id))
-          }
+          Redirect(routes.ProductController.show(res.id))
+        }
       })
   }
 
-  /** Updated the product vendor relation*/
+  /** Updated the product vendor relation */
   def updateProductVendorPost = LanguageAction.async { implicit request =>
     updateProductVendorForm.bindFromRequest.fold(
       errorForm => {
@@ -310,12 +307,12 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
           res.productId, res.cost,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.ProductController.show(res.productId))
-          }
+          Redirect(routes.ProductController.show(res.productId))
+        }
       })
   }
 
-  /** Uploads the product image*/
+  /** Uploads the product image */
   def upload(id: Long) = LanguageAction(parse.multipartFormData) { request =>
     request.body.file("picture").map { picture =>
       import java.io.File
@@ -346,15 +343,15 @@ case class SearchProductForm(search: String)
 
 /** class for create form */
 case class CreateProductForm(
-  name: String, cost: Double, percent: Double,
-  description: String, measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
+                              name: String, cost: Double, percent: Double,
+                              description: String, measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
 
-/** class for update form*/
+/** class for update form */
 case class UpdateProductForm(
-  id: Long, name: String, cost: Double,
-  percent: Double, price: Double, description: String,
-  measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
+                              id: Long, name: String, cost: Double,
+                              percent: Double, price: Double, description: String,
+                              measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
 
-/** class for product vendor relation form*/
+/** class for product vendor relation form */
 case class UpdateProductVendorForm(
-  id: Long, productId: Long, vendorId: Long, cost: Double)
+                                    id: Long, productId: Long, vendorId: Long, cost: Double)
