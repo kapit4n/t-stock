@@ -2,12 +2,12 @@ package security
 
 import javax.inject.Singleton
 
-import be.objectify.deadbolt.scala.{ HandlerKey, DeadboltHandler }
+import be.objectify.deadbolt.scala.{HandlerKey, DeadboltHandler}
 import be.objectify.deadbolt.scala.cache.HandlerCache
 
 /**
- * @author Steve Chaloner (steve@objectify.be)
- */
+  * @author Steve Chaloner (steve@objectify.be)
+  */
 @Singleton
 class MyHandlerCache extends HandlerCache {
 

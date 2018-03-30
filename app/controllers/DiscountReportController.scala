@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -22,11 +22,11 @@ import play.api.data.format.Formats._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class DiscountReportController @Inject() (repo: DiscountReportRepository, repoProd: CustomerRepository,
-  repoSto: UserRepository, repoDiscDetail: DiscountDetailRepository, repoRequestRows: RequestRowRepository,
-  repoRequestRowCustomers: RequestRowCustomerRepository,
-  repoSetting: SettingRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class DiscountReportController @Inject()(repo: DiscountReportRepository, repoProd: CustomerRepository,
+                                         repoSto: UserRepository, repoDiscDetail: DiscountDetailRepository, repoRequestRows: RequestRowRepository,
+                                         repoRequestRowCustomers: RequestRowCustomerRepository,
+                                         repoSetting: SettingRepository,
+                                         val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateDiscountReportForm] = Form {
     mapping(
@@ -129,7 +129,7 @@ class DiscountReportController @Inject() (repo: DiscountReportRepository, repoPr
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
         cache.toMap
     }, 3000.millis)

@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -20,9 +20,9 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository, repoRow: RequestRowRepository,
-  repoUser: UserRepository, repoInsUser: UserRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class ProductRequestByInsumoController @Inject()(repo: ProductRequestRepository, repoRow: RequestRowRepository,
+                                                 repoUser: UserRepository, repoInsUser: UserRepository,
+                                                 val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateProductRequestByInsumoForm] = Form {
     mapping(
@@ -60,8 +60,8 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
           res.status, res.detail, "insumo",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.ProductRequestByInsumoController.show(resNew.id))
-          }
+          Redirect(routes.ProductRequestByInsumoController.show(resNew.id))
+        }
       })
   }
 
@@ -114,6 +114,7 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
   }
 
   var updatedId: Long = 0
+
   // update required
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     updatedId = id;
@@ -153,7 +154,7 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -165,7 +166,7 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -177,7 +178,7 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -214,8 +215,8 @@ class ProductRequestByInsumoController @Inject() (repo: ProductRequestRepository
           res.status, res.detail, "insumo",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.ProductRequestByInsumoController.show(res.id))
-          }
+          Redirect(routes.ProductRequestByInsumoController.show(res.id))
+        }
       })
   }
 }

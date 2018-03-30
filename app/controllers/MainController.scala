@@ -12,13 +12,13 @@ import models._
 import dal._
 import it.innove.play.pdf.PdfGenerator
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class MainController @Inject() (repo: UserRepository, logEntryRepo: LogEntryRepository, val messagesApi: MessagesApi, deadbolt: DeadboltActions)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class MainController @Inject()(repo: UserRepository, logEntryRepo: LogEntryRepository, val messagesApi: MessagesApi, deadbolt: DeadboltActions)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   def index = LanguageAction { implicit request =>
     Await.result(repo.getById(request.session.get("userId").getOrElse("0").toLong).map { res2 =>

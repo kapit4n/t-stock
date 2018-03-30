@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,8 +21,8 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRowCustomer: RequestRowCustomerRepository, repoProductReq: ProductRequestRepository, repoUnit: MeasureRepository,
-  repoProduct: ProductRepository, repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class RequestRowByInsumoController @Inject()(repo: RequestRowRepository, repoRowCustomer: RequestRowCustomerRepository, repoProductReq: ProductRequestRepository, repoUnit: MeasureRepository,
+                                             repoProduct: ProductRepository, repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateRequestRowByInsumoForm] = Form {
     mapping(
@@ -46,7 +46,7 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
         cache.toMap
     }, 3000.millis)
@@ -58,7 +58,9 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
       Ok(views.html.order.requestRow_index(new MyDeadboltHandler, res))
     }
   }
+
   var requestIdParm: Long = 0
+
   def addGet(requestId: Long) = LanguageAction { implicit request =>
     unidades = getMeasuresMap()
     productRequestsMap = getProductRequestsMap(requestId)
@@ -86,8 +88,8 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
           product1.measureId, unidades(product1.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.RequestRowByInsumoController.show(resNew.id))
-          }
+          Redirect(routes.RequestRowByInsumoController.show(resNew.id))
+        }
       })
   }
 
@@ -164,7 +166,7 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (res) =>
-            cache put (res.id.toString(), res.date.toString())
+            cache put(res.id.toString(), res.date.toString())
         }
         cache.toMap
     }, 3000.millis)
@@ -176,7 +178,7 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -210,7 +212,7 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -270,8 +272,8 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
           res.quantity, new_price, res.quantity * new_price, res.status, res.measureId, res.measureId.toString,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.RequestRowByInsumoController.show(res.id))
-          }
+          Redirect(routes.RequestRowByInsumoController.show(res.id))
+        }
         println(res)
         println("Some issue by here")
         Future.successful(Redirect(routes.RequestRowByInsumoController.show(res.id)))
@@ -292,7 +294,7 @@ class RequestRowByInsumoController @Inject() (repo: RequestRowRepository, repoRo
         repoProduct.searchProduct(res.search).map { resProducts =>
           val cache = collection.mutable.Map[String, String]()
           resProducts.map { product =>
-            cache put (product.id.toString(), product.name.toString)
+            cache put(product.id.toString(), product.name.toString)
           }
           products = cache.toMap
           Ok(views.html.order.requestRowByInsumo_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, unidades))

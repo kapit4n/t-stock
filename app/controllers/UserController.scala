@@ -11,16 +11,16 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class UserController @Inject() (
-  repo: UserRepository,
-  repoRoles: UserRoleRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class UserController @Inject()(
+                                repo: UserRepository,
+                                repoRoles: UserRoleRepository,
+                                val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateUserForm] = Form {
     mapping(
@@ -81,8 +81,8 @@ class UserController @Inject() (
           res.Salary, res.type_1, res.login, res.password,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.UserController.show(resNew.id))
-          }
+          Redirect(routes.UserController.show(resNew.id))
+        }
       })
   }
 
@@ -115,6 +115,7 @@ class UserController @Inject() (
   }
 
   var userId: Long = _
+
   // to copy
   def show(id: Long) = LanguageAction.async { implicit request =>
     userId = id
@@ -183,8 +184,8 @@ class UserController @Inject() (
           res.login, res.password,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.UserController.show(res.id))
-          }
+          Redirect(routes.UserController.show(res.id))
+        }
       })
   }
 }

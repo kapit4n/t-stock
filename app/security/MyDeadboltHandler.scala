@@ -1,9 +1,9 @@
 package security
 
-import be.objectify.deadbolt.scala.{ DynamicResourceHandler, DeadboltHandler }
-import play.api.mvc.{ Request, Result, Results }
+import be.objectify.deadbolt.scala.{DynamicResourceHandler, DeadboltHandler}
+import play.api.mvc.{Request, Result, Results}
 import be.objectify.deadbolt.core.models.Subject
-import scala.concurrent.{ Future, Await }
+import scala.concurrent.{Future, Await}
 import models.UserSecurity
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
@@ -12,9 +12,9 @@ import javax.inject._
 import models._
 
 /**
- *
- * @author Steve Chaloner (steve@objectify.be)
- */
+  *
+  * @author Steve Chaloner (steve@objectify.be)
+  */
 class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] = None, var rolesListParam: List[SecurityRole] = List()) extends DeadboltHandler {
 
   def beforeAuthCheck[A](request: Request[A]) = Future(None)
@@ -31,6 +31,8 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
   }
 
   def onAuthFailure[A](request: Request[A]): Future[Result] = {
-    Future { Results.Forbidden(views.html.accessFailed()) }
+    Future {
+      Results.Forbidden(views.html.accessFailed())
+    }
   }
 }

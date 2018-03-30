@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -20,10 +20,10 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class TransactionController @Inject() (
-  repo: TransactionRepository, repoDetail: TransactionDetailRepository,
-  repoVete: UserRepository, repoSto: UserRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class TransactionController @Inject()(
+                                       repo: TransactionRepository, repoDetail: TransactionDetailRepository,
+                                       repoVete: UserRepository, repoSto: UserRepository,
+                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newFormIncome: Form[CreateTransactionFormIncome] = Form {
     mapping(
@@ -50,7 +50,7 @@ class TransactionController @Inject() (
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -92,8 +92,8 @@ class TransactionController @Inject() (
           userId, userName,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.TransactionController.show(resNew.id))
-          }
+          Redirect(routes.TransactionController.show(resNew.id))
+        }
       })
   }
 
@@ -112,8 +112,8 @@ class TransactionController @Inject() (
           res.autorizedBy, users(res.autorizedBy.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.TransactionController.show(resNew.id))
-          }
+          Redirect(routes.TransactionController.show(resNew.id))
+        }
       })
   }
 
@@ -203,8 +203,8 @@ class TransactionController @Inject() (
           res.description,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.TransactionController.show(res.id))
-          }
+          Redirect(routes.TransactionController.show(res.id))
+        }
       })
   }
 
@@ -221,8 +221,8 @@ class TransactionController @Inject() (
           res.autorizedBy, users(res.autorizedBy.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.TransactionController.show(res.id))
-          }
+          Redirect(routes.TransactionController.show(res.id))
+        }
       })
   }
 

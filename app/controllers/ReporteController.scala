@@ -11,13 +11,13 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ Future, ExecutionContext, Await }
+import scala.concurrent.{Future, ExecutionContext, Await}
 
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 import javax.inject._
 
-class ReportController @Inject() (repo: ReportRepository, repoAccount: AccountRepository, repoTransDetails: TransactionDetailRepository, repoTrans: TransactionRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class ReportController @Inject()(repo: ReportRepository, repoAccount: AccountRepository, repoTransDetails: TransactionDetailRepository, repoTrans: TransactionRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateReportForm] = Form {
     mapping(
@@ -77,13 +77,13 @@ class ReportController @Inject() (repo: ReportRepository, repoAccount: AccountRe
     val account530: Seq[Account] = getAccountByCode("530")
     val account430: Seq[Account] = getAccountByCode("430")
     val accountADADC: Seq[Account] = getAccountByCode("ADADC") // ADADC
-    val account450: Seq[Account] = getAccountByCode("450")
+  val account450: Seq[Account] = getAccountByCode("450")
     val account570: Seq[Account] = getAccountByCode("570")
     val account470: Seq[Account] = getAccountByCode("470")
     val account580: Seq[Account] = getAccountByCode("580")
     val account480: Seq[Account] = getAccountByCode("480")
     val accountACEI: Seq[Account] = getAccountByCode("ACEI") // ACEI
-    val account460: Seq[Account] = getAccountByCode("460")
+  val account460: Seq[Account] = getAccountByCode("460")
 
     var hello: String = ""
     if (account510.length > 0 && account410.length > 0 && account540.length > 0 && account440.length > 0
@@ -107,13 +107,13 @@ class ReportController @Inject() (repo: ReportRepository, repoAccount: AccountRe
     val account530: Seq[Account] = getAccountByCode("530")
     val account430: Seq[Account] = getAccountByCode("430")
     val accountADADC: Seq[Account] = getAccountByCode("ADADC") // ADADC
-    val account450: Seq[Account] = getAccountByCode("450")
+  val account450: Seq[Account] = getAccountByCode("450")
     val account570: Seq[Account] = getAccountByCode("570")
     val account470: Seq[Account] = getAccountByCode("470")
     val account580: Seq[Account] = getAccountByCode("580")
     val account480: Seq[Account] = getAccountByCode("480")
     val accountACEI: Seq[Account] = getAccountByCode("ACEI") // ACEI
-    val account460: Seq[Account] = getAccountByCode("460")
+  val account460: Seq[Account] = getAccountByCode("460")
 
     var hello: String = ""
     if (account510.length > 0 && account410.length > 0 && account540.length > 0 && account440.length > 0

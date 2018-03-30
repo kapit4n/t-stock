@@ -11,14 +11,14 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import it.innove.play.pdf.PdfGenerator
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class AccountController @Inject() (repo: AccountRepository, repoDetails: TransactionDetailRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class AccountController @Inject()(repo: AccountRepository, repoDetails: TransactionDetailRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val yes_no = scala.collection.immutable.Map[String, String]("NO" -> "NO", "SI" -> "SI")
   val account_type = scala.collection.immutable.Map[String, String]("ACTIVO" -> "ACTIVO", "PASIVO" -> "PASIVO", "PATRIMONIO" -> "PATRIMONIO", "OUTCOME" -> "OUTCOME", "INCOME" -> "INCOME")
@@ -59,8 +59,8 @@ class AccountController @Inject() (repo: AccountRepository, repoDetails: Transac
           res.parent, res.description,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.AccountController.show(resNew.id))
-          }
+          Redirect(routes.AccountController.show(resNew.id))
+        }
       })
   }
 
@@ -158,19 +158,19 @@ class AccountController @Inject() (repo: AccountRepository, repoDetails: Transac
           res.parent, res.description,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.AccountController.show(res.id))
-          }
+          Redirect(routes.AccountController.show(res.id))
+        }
       })
   }
 
   def getAccountNamesMap(): Map[String, String] = {
     val cache = collection.mutable.Map[String, String]()
-    cache put ("0", "--- Ninguno ---")
+    cache put("0", "--- Ninguno ---")
     Await.result(
       repo.getListObjs().map { accountResult =>
         accountResult.foreach {
           account =>
-            cache put (account.id.toString, account.code + " ------------- " + account.name)
+            cache put(account.id.toString, account.code + " ------------- " + account.name)
         }
       }, 1000.millis)
     cache.toMap
@@ -190,7 +190,7 @@ class AccountController @Inject() (repo: AccountRepository, repoDetails: Transac
         repo.searchAccount(res.search).map { resAccounts =>
           val cache = collection.mutable.Map[String, String]()
           resAccounts.map { account =>
-            cache put (account.id.toString(), account.code.toString + ": " + account.name.toString)
+            cache put(account.id.toString(), account.code.toString + ": " + account.name.toString)
           }
           parentAccounts = cache.toMap
           Ok(views.html.account.account_add(new MyDeadboltHandler, searchAccountForm, newForm, yes_no, account_type, parentAccounts))

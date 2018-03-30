@@ -6,10 +6,10 @@ import be.objectify.deadbolt.scala.TemplateFailureListener
 import play.api.Logger
 
 /**
- * No-op implementation of TemplateFailureListener..
- *
- * @author Steve Chaloner (steve@objectify.be)
- */
+  * No-op implementation of TemplateFailureListener..
+  *
+  * @author Steve Chaloner (steve@objectify.be)
+  */
 @Singleton
 class MyCustomTemplateFailureListener extends TemplateFailureListener {
 

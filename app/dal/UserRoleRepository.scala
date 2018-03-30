@@ -1,21 +1,21 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.UserRole
 import models.Roles
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class UserRoleRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class UserRoleRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,16 +23,23 @@ class UserRoleRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   private class UserRolesTable(tag: Tag) extends Table[UserRole](tag, "userRole") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def userId = column[Long]("userId")
+
     def roleName = column[String]("roleName")
+
     def roleCode = column[String]("roleCode")
+
     def * = (id, userId, roleName, roleCode) <> ((UserRole.apply _).tupled, UserRole.unapply)
   }
 
   private class RolesTable(tag: Tag) extends Table[Roles](tag, "roles") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def roleName = column[String]("roleName")
+
     def roleCode = column[String]("roleCode")
+
     def * = (id, roleName, roleCode) <> ((Roles.apply _).tupled, Roles.unapply)
   }
 

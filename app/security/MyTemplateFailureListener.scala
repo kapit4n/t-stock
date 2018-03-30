@@ -6,8 +6,8 @@ import be.objectify.deadbolt.scala.TemplateFailureListener
 import play.api.Logger
 
 /**
- * @author Steve Chaloner (steve@objectify.be)
- */
+  * @author Steve Chaloner (steve@objectify.be)
+  */
 @Singleton
 class MyTemplateFailureListener extends TemplateFailureListener {
 

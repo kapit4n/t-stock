@@ -11,7 +11,7 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import it.innove.play.pdf.PdfGenerator
@@ -19,7 +19,7 @@ import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 import play.api.data.format.Formats._
 
-class MeasureController @Inject() (repo: MeasureRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class MeasureController @Inject()(repo: MeasureRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateMeasureForm] = Form {
     mapping(
@@ -37,9 +37,9 @@ class MeasureController @Inject() (repo: MeasureRepository, val messagesApi: Mes
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
-        cache put ("0", "Ninguno")
+        cache put("0", "Ninguno")
         cache.toMap
     }, 3000.millis)
   }
@@ -66,8 +66,8 @@ class MeasureController @Inject() (repo: MeasureRepository, val messagesApi: Mes
           res.measureId, measures(res.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.MeasureController.show(resNew.id))
-          }
+          Redirect(routes.MeasureController.show(resNew.id))
+        }
       })
   }
 
@@ -143,8 +143,8 @@ class MeasureController @Inject() (repo: MeasureRepository, val messagesApi: Mes
           res.measureId, measures(res.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.MeasureController.show(res.id))
-          }
+          Redirect(routes.MeasureController.show(res.id))
+        }
       })
   }
 

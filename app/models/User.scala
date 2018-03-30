@@ -1,4 +1,5 @@
 package models
+
 import be.objectify.deadbolt.core.models.Subject
 import play.libs.Scala
 

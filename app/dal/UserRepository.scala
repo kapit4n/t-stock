@@ -1,20 +1,20 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.User
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,14 +23,23 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLo
   private class UsersTable(tag: Tag) extends Table[User](tag, "user") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("name")
+
     def carnet = column[Int]("carnet")
+
     def phone = column[Int]("phone")
+
     def address = column[String]("address")
+
     def Salary = column[Int]("Salary")
+
     def type_1 = column[String]("type")
+
     def login = column[String]("login")
+
     def password = column[String]("password")
+
     def * = (id, name, carnet, phone, address, Salary, type_1, login, password) <> ((User.apply _).tupled, User.unapply)
   }
 
@@ -39,8 +48,8 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLo
   private val tableQ = TableQuery[UsersTable]
 
   def create(name: String, carnet: Int, phone: Int, address: String,
-    Salary: Int, type_1: String, login: String, password: String,
-    userId: Long, userName: String): Future[User] = db.run {
+             Salary: Int, type_1: String, login: String, password: String,
+             userId: Long, userName: String): Future[User] = db.run {
     repoLog.createLogEntry(repoLog.CREATE, repoLog.USER, userId, userName, name);
     (tableQ.map(p => (p.name, p.carnet, p.phone, p.address, p.Salary, p.type_1, p.login, p.password))
       returning tableQ.map(_.id)
@@ -78,23 +87,23 @@ class UserRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLo
 
   // update required to copy
   def update(id: Long, name: String, carnet: Int, phone: Int,
-    address: String, Salary: Int, type_1: String,
-    login: String, password: String, userId: Long,
-    userName: String): Future[Seq[User]] = db.run {
+             address: String, Salary: Int, type_1: String,
+             login: String, password: String, userId: Long,
+             userName: String): Future[Seq[User]] = db.run {
     repoLog.createLogEntry(repoLog.UPDATE, repoLog.USER, userId, userName, name);
-    val q = for { c <- tableQ if c.id === id } yield c.name
+    val q = for {c <- tableQ if c.id === id} yield c.name
     db.run(q.update(name))
-    val q2 = for { c <- tableQ if c.id === id } yield c.carnet
+    val q2 = for {c <- tableQ if c.id === id} yield c.carnet
     db.run(q2.update(carnet))
-    val q3 = for { c <- tableQ if c.id === id } yield c.phone
+    val q3 = for {c <- tableQ if c.id === id} yield c.phone
     db.run(q3.update(phone))
-    val q4 = for { c <- tableQ if c.id === id } yield c.Salary
+    val q4 = for {c <- tableQ if c.id === id} yield c.Salary
     db.run(q4.update(Salary))
-    val q5 = for { c <- tableQ if c.id === id } yield c.type_1
+    val q5 = for {c <- tableQ if c.id === id} yield c.type_1
     db.run(q5.update(type_1))
-    val q6 = for { c <- tableQ if c.id === id } yield c.login
+    val q6 = for {c <- tableQ if c.id === id} yield c.login
     db.run(q6.update(login))
-    val q7 = for { c <- tableQ if c.id === id } yield c.password
+    val q7 = for {c <- tableQ if c.id === id} yield c.password
     db.run(q7.update(password))
     tableQ.filter(_.id === id).result
   }

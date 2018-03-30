@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -20,9 +20,9 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: ProductRepository, repoProductVendor: ProductVendorRepository,
-  repoMeasure: MeasureRepository,
-  repoProvee: VendorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class ProductInvController @Inject()(repo: ProductInvRepository, repoProduct: ProductRepository, repoProductVendor: ProductVendorRepository,
+                                     repoMeasure: MeasureRepository,
+                                     repoProvee: VendorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateProductInvForm] = Form {
     mapping(
@@ -107,7 +107,7 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -120,7 +120,7 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -130,7 +130,7 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
   def getVendorIdsByProduct(): Seq[Long] = {
     Await.result(repoProductVendor.listVendorsIdsByProductId(productId).map {
       case (res1) =>
-      res1  
+        res1
     }, 3000.millis)
   }
 
@@ -138,7 +138,7 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
     Await.result(repoMeasure.getById(measureId).map { measures =>
       val cache = collection.mutable.Map[String, String]()
       measures.foreach { measure =>
-        cache put (measure.id.toString, measure.name)
+        cache put(measure.id.toString, measure.name)
       }
       cache.toMap
     }, 3000.millis)
@@ -184,9 +184,9 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
           res.vendorId, vendorMap(res.vendorId.toString),
           res.measureId, measureMap(res.measureId.toString),
           res.amount, res.amount).map { resNew =>
-            repoProduct.updateAmount(res.productId, res.amount)
-            Redirect(routes.ProductInvController.show(resNew.id))
-          }
+          repoProduct.updateAmount(res.productId, res.amount)
+          Redirect(routes.ProductInvController.show(resNew.id))
+        }
       })
   }
 
@@ -204,9 +204,9 @@ class ProductInvController @Inject() (repo: ProductInvRepository, repoProduct: P
           res.vendorId, vendorMap(res.vendorId.toString),
           res.measureId, measureMap(res.measureId.toString),
           res.amount, res.amountLeft).map { _ =>
-            repoProduct.updateInventary(res.productId, res.amountLeft - oldAmountLeft);
-            Redirect(routes.ProductInvController.show(res.id))
-          }
+          repoProduct.updateInventary(res.productId, res.amountLeft - oldAmountLeft);
+          Redirect(routes.ProductInvController.show(res.id))
+        }
       })
   }
 

@@ -10,14 +10,14 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 import javax.inject._
 import it.innove.play.pdf.PdfGenerator
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class SettingController @Inject() (repo: SettingRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class SettingController @Inject()(repo: SettingRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val companyes = scala.collection.immutable.Map[String, String]("0" -> "Ninguno", "1" -> "Company 1", "2" -> "Company 2")
 
@@ -32,6 +32,7 @@ class SettingController @Inject() (repo: SettingRepository, val messagesApi: Mes
   }
 
   var updatedRow: Setting = _
+
   // to copy
   def show() = LanguageAction.async { implicit request =>
     repo.getFirst().map { res =>

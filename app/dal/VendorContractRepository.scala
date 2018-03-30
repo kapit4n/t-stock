@@ -1,23 +1,23 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.VendorContract
 import java.sql.Date
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class VendorContractRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,
-  repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class VendorContractRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
+                                         repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -26,16 +26,20 @@ class VendorContractRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
   private class VendorContractTable(tag: Tag) extends Table[VendorContract](tag, "vendorContract") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def vendorId = column[Long]("vendorId")
+
     def startDate = column[String]("startDate")
+
     def endDate = column[String]("endDate")
+
     def * = (id, vendorId, startDate, endDate) <> ((VendorContract.apply _).tupled, VendorContract.unapply)
   }
 
   private val tableQ = TableQuery[VendorContractTable]
 
   def create(vendorId: Long, startDate: String, endDate: String, userId: Long,
-    userName: String): Future[VendorContract] = db.run {
+             userName: String): Future[VendorContract] = db.run {
     repoLog.createLogEntry(repoLog.CREATE, repoLog.VENDOR, userId, userName, vendorId.toString);
     (tableQ.map(p => (p.vendorId, p.startDate, p.endDate))
       returning tableQ.map(_.id)
@@ -54,11 +58,11 @@ class VendorContractRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
   // update required to copy
   def update(id: Long, vendorId: Long, startDate: String, endDate: String, userId: Long, userName: String): Future[Seq[VendorContract]] = db.run {
     repoLog.createLogEntry(repoLog.UPDATE, repoLog.VENDOR, userId, userName, vendorId.toString);
-    val q = for { c <- tableQ if c.id === id } yield c.vendorId
+    val q = for {c <- tableQ if c.id === id} yield c.vendorId
     db.run(q.update(vendorId))
-    val q3 = for { c <- tableQ if c.id === id } yield c.startDate
+    val q3 = for {c <- tableQ if c.id === id} yield c.startDate
     db.run(q3.update(startDate))
-    val q2 = for { c <- tableQ if c.id === id } yield c.endDate
+    val q2 = for {c <- tableQ if c.id === id} yield c.endDate
     db.run(q2.update(endDate))
     tableQ.filter(_.id === id).result
   }

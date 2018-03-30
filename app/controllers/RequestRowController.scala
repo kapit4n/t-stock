@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,8 +21,8 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustomer: RequestRowCustomerRepository, repoProductReq: ProductRequestRepository, repoUnit: MeasureRepository,
-  repoProduct: ProductRepository, repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer: RequestRowCustomerRepository, repoProductReq: ProductRequestRepository, repoUnit: MeasureRepository,
+                                     repoProduct: ProductRepository, repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateRequestRowForm] = Form {
     mapping(
@@ -47,7 +47,7 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
         cache.toMap
     }, 3000.millis)
@@ -85,8 +85,8 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
           product1.measureId, unidades(product1.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.RequestRowController.show(resNew.id))
-          }
+          Redirect(routes.RequestRowController.show(resNew.id))
+        }
       })
   }
 
@@ -158,7 +158,7 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (res) =>
-            cache put (res.id.toString(), res.date.toString())
+            cache put(res.id.toString(), res.date.toString())
         }
         cache.toMap
     }, 3000.millis)
@@ -170,7 +170,7 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -204,7 +204,7 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -285,8 +285,8 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
           res.quantity, new_price, res.quantity * new_price, res.status, res.measureId, res.measureId.toString,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.RequestRowController.show(res.id))
-          }
+          Redirect(routes.RequestRowController.show(res.id))
+        }
       })
   }
 
@@ -304,7 +304,7 @@ class RequestRowController @Inject() (repo: RequestRowRepository, repoRowCustome
         repoProduct.searchProduct(res.search).map { resProducts =>
           val cache = collection.mutable.Map[String, String]()
           resProducts.map { product =>
-            cache put (product.id.toString(), product.name.toString)
+            cache put(product.id.toString(), product.name.toString)
           }
           products = cache.toMap
           Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, unidades))

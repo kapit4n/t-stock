@@ -1,19 +1,19 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.Account
-import scala.concurrent.{ Future, ExecutionContext, Await }
+import scala.concurrent.{Future, ExecutionContext, Await}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class AccountRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -21,22 +21,32 @@ class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repo
 
   private class AccountesTable(tag: Tag) extends Table[Account](tag, "account") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def code = column[String]("code")
+
     def name = column[String]("name")
+
     def type_1 = column[String]("type")
+
     def negativo = column[String]("negativo")
+
     def parent = column[Long]("parent")
+
     def description = column[String]("description")
+
     def child = column[Boolean]("child")
+
     def debit = column[Double]("debit")
+
     def credit = column[Double]("credit")
+
     def * = (id, code, name, type_1, negativo, parent, description, child, debit, credit) <> ((Account.apply _).tupled, Account.unapply)
   }
 
   private val tableQ = TableQuery[AccountesTable]
 
   def create(code: String, name: String, type_1: String, negativo: String, parent: Long, description: String,
-    userId: Long, userName: String): Future[Account] = db.run {
+             userId: Long, userName: String): Future[Account] = db.run {
     repoLog.createLogEntry(repoLog.CREATE, repoLog.ACCOUNT, userId, userName, name)
 
     updateParentFlag(parent, false, 0)
@@ -77,11 +87,11 @@ class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repo
     if (type_1 == "Income") {
       tableQ.filter(p => p.child === true && (
         p.type_1 === "INCOME" || p.type_1 === "PATRIMONIO" ||
-        p.type_1 === "ACTIVO" || p.type_1 === "PASIVO")).sortBy(m => (m.code)).result
+          p.type_1 === "ACTIVO" || p.type_1 === "PASIVO")).sortBy(m => (m.code)).result
     } else {
       tableQ.filter(p => p.child === true && (
         p.type_1 === "OUTCOME" || p.type_1 === "PATRIMONIO" ||
-        p.type_1 === "ACTIVO" || p.type_1 === "PASIVO")).sortBy(m => (m.code)).result
+          p.type_1 === "ACTIVO" || p.type_1 === "PASIVO")).sortBy(m => (m.code)).result
     }
   }
 
@@ -98,15 +108,15 @@ class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repo
   // update required to copy
   def update(id: Long, code: String, name: String, type_1: String, negativo: String, parent: Long, description: String, userId: Long, userName: String): Future[Seq[Account]] = db.run {
     repoLog.createLogEntry(repoLog.UPDATE, repoLog.ACCOUNT, userId, userName, name);
-    val q = for { c <- tableQ if c.id === id } yield c.code
+    val q = for {c <- tableQ if c.id === id} yield c.code
     db.run(q.update(code))
-    val q2 = for { c <- tableQ if c.id === id } yield c.name
+    val q2 = for {c <- tableQ if c.id === id} yield c.name
     db.run(q2.update(name))
-    val q3 = for { c <- tableQ if c.id === id } yield c.type_1
+    val q3 = for {c <- tableQ if c.id === id} yield c.type_1
     db.run(q3.update(type_1))
-    val q4 = for { c <- tableQ if c.id === id } yield c.negativo
+    val q4 = for {c <- tableQ if c.id === id} yield c.negativo
     db.run(q4.update(negativo))
-    val q5 = for { c <- tableQ if c.id === id } yield c.parent
+    val q5 = for {c <- tableQ if c.id === id} yield c.parent
     getById(id).map { res =>
       if (res(0).parent != parent) {
         updateParentFlag(parent, false, id)
@@ -114,14 +124,14 @@ class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repo
         db.run(q5.update(parent))
       }
     }
-    val q6 = for { c <- tableQ if c.id === id } yield c.description
+    val q6 = for {c <- tableQ if c.id === id} yield c.description
     db.run(q6.update(description))
     tableQ.filter(_.id === id).result
   }
 
   // Update the parent flag to true or false
   def updateParentFlag(id: Long, flag: Boolean, actualId: Long): Future[Seq[Account]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.child
+    val q = for {c <- tableQ if c.id === id} yield c.child
     if (!flag) {
       db.run(q.update(flag))
     } else {
@@ -138,8 +148,8 @@ class AccountRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,repo
   }
 
   def updateParentDebitCredit(id: Long, debit: Double, credit: Double): Future[Seq[Account]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.debit
-    val q2 = for { c <- tableQ if c.id === id } yield c.credit
+    val q = for {c <- tableQ if c.id === id} yield c.debit
+    val q2 = for {c <- tableQ if c.id === id} yield c.credit
     getById(id).map { res =>
       db.run(q.update(debit + res(0).debit))
       db.run(q2.update(credit + res(0).credit))

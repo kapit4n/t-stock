@@ -1,20 +1,20 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.RequestRowCustomer
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoProduct: ProductRepository)(implicit ec: ExecutionContext) {
+class RequestRowCustomerRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoProduct: ProductRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,11 +23,16 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
   private class RequestRowCustomerTable(tag: Tag) extends Table[RequestRowCustomer](tag, "requestRowCustomer") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def requestRowId = column[Long]("requestRowId")
+
     def productId = column[Long]("productId")
+
     def productName = column[String]("productName")
+
     def customerId = column[Long]("customerId") // customer, driver
     def customerName = column[String]("customerName")
+
     def quantity = column[Int]("quantity") // amount of products
     def price = column[Double]("price") // unit price of the product
     def totalPrice = column[Double]("totalPrice") // price * quantity
@@ -36,6 +41,7 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
     def status = column[String]("status") // completed, credit, 
     def measureId = column[Long]("measureId") // measure of the paid
     def measureName = column[String]("measureName")
+
     def type_1 = column[String]("type") // customer, driver
     def observation = column[String]("payType") // observations of the pay
     def * = (id, requestRowId, productId, productName, customerId, customerName,
@@ -46,16 +52,16 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
   private val tableQ = TableQuery[RequestRowCustomerTable]
 
   def create(requestRowId: Long, productId: Long, productName: String, customerId: Long, customerName: String,
-    quantity: Int, price: Double, totalPrice: Double, paid: Double, credit: Double,
-    status: String, measureId: Long, measureName: String, type_1: String, observation: String): Future[RequestRowCustomer] = db.run {
+             quantity: Int, price: Double, totalPrice: Double, paid: Double, credit: Double,
+             status: String, measureId: Long, measureName: String, type_1: String, observation: String): Future[RequestRowCustomer] = db.run {
     (tableQ.map(p => (p.requestRowId, p.productId, p.productName, p.customerId, p.customerName, p.quantity,
       p.price, p.totalPrice, p.paid, p.credit, p.status, p.measureId, p.measureName, p.type_1, p.observation))
       returning tableQ.map(_.id)
       into ((nameAge, id) => RequestRowCustomer(
-        id, nameAge._1, nameAge._2, nameAge._3, nameAge._4, nameAge._5, nameAge._6, nameAge._7,
-        nameAge._8, nameAge._9, nameAge._10, nameAge._11, nameAge._12, nameAge._13, nameAge._14,
-        nameAge._15))) += (requestRowId, productId, productName, customerId, customerName, quantity,
-        price, totalPrice, paid, credit, status, measureId, measureName, type_1, observation)
+      id, nameAge._1, nameAge._2, nameAge._3, nameAge._4, nameAge._5, nameAge._6, nameAge._7,
+      nameAge._8, nameAge._9, nameAge._10, nameAge._11, nameAge._12, nameAge._13, nameAge._14,
+      nameAge._15))) += (requestRowId, productId, productName, customerId, customerName, quantity,
+      price, totalPrice, paid, credit, status, measureId, measureName, type_1, observation)
   }
 
   def list(): Future[Seq[RequestRowCustomer]] = db.run {
@@ -99,8 +105,8 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
 
   // update required to copy, add totalPrice, credit and observations
   def update(id: Long, requestRowId: Long, productId: Long, productName: String, customerId: Long, customerName: String,
-    quantity: Int, price: Double, totalPrice: Double, paid: Double, credit: Double, status: String, measureId: Long,
-    measureName: String, type_1: String, observation: String): Future[Seq[RequestRowCustomer]] = db.run {
+             quantity: Int, price: Double, totalPrice: Double, paid: Double, credit: Double, status: String, measureId: Long,
+             measureName: String, type_1: String, observation: String): Future[Seq[RequestRowCustomer]] = db.run {
     db.run(tableQ.filter(_.id === id).map(x => (
       x.requestRowId, x.productId, x.productName, x.customerId, x.customerName,
       x.quantity, x.price, x.totalPrice, x.paid, x.credit, x.status, x.measureId,
@@ -112,19 +118,19 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
 
   // Update the status to enviado status
   def sendById(id: Long): Future[Seq[RequestRowCustomer]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     tableQ.filter(_.id === id).result
   }
 
   // Update the status to enviado status
   def acceptById(id: Long): Future[Seq[RequestRowCustomer]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     tableQ.filter(_.id === id).result
   }
 
   // Update the status to enviado status
   def updatePaid(id: Long, monto: Double): Future[Seq[RequestRowCustomer]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.paid
+    val q = for {c <- tableQ if c.id === id} yield c.paid
     getById(id).map { row =>
       db.run(q.update(row(0).paid + monto))
     }
@@ -133,7 +139,7 @@ class RequestRowCustomerRepository @Inject() (dbConfigProvider: DatabaseConfigPr
 
   // Update the status to finalizado status
   def finishById(id: Long): Future[Seq[RequestRowCustomer]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     tableQ.filter(_.id === id).result
   }
 

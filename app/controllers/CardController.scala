@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,10 +21,10 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class CardController @Inject() (repo: ProductRequestRepository, repoProducts: ProductRepository,
-  repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
-  repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class CardController @Inject()(repo: ProductRequestRepository, repoProducts: ProductRepository,
+                               repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
+                               repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
+                               val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateProductRequestForm] = Form {
     mapping(
@@ -60,7 +60,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
         cache.toMap
     }, 3000.millis)
@@ -95,8 +95,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
           res.status, res.detail, "veterinaria",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.ProductRequestController.show(resNew.id))
-          }
+          Redirect(routes.ProductRequestController.show(resNew.id))
+        }
       })
   }
 
@@ -147,7 +147,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
     val requestRows = getChildren(id)
     unidades = getMeasuresMap()
     productTuples = getProductTuples()
-    val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x,y) => x + y)
+    val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
 
     repo.getById(id).map { res =>
       requestObj = res(0)
@@ -156,6 +156,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   }
 
   var updatedId: Long = 0
+
   // update required
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     updatedId = id;
@@ -183,11 +184,11 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
   def updateCardItemsPost = Action.async { request =>
 
     println("testPost Called");
-    repoRow.updateQuantity( request.body.asFormUrlEncoded.get("id").head.toLong,
-                            request.body.asFormUrlEncoded.get("quantity").head.toInt ).map {
-                              case (result) => Ok("Succeeded");
-                          }
-}
+    repoRow.updateQuantity(request.body.asFormUrlEncoded.get("id").head.toLong,
+      request.body.asFormUrlEncoded.get("quantity").head.toInt).map {
+      case (result) => Ok("Succeeded");
+    }
+  }
 
   // update required
   def getFinish(id: Long) = LanguageAction.async { implicit request =>
@@ -202,19 +203,19 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
     }, 3000.millis)
-  }                         
+  }
 
   def getEmployeeListNamesMap(): Map[String, String] = {
     Await.result(repoVete.listEmployees().map {
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -226,7 +227,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -238,7 +239,7 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -250,13 +251,13 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       Await.result(repoProducts.list().map {
         case (productList) =>
           productList.map {
-            case (product) => 
+            case (product) =>
               (
-                product.id, 
-                if(product.name.length() > 10 ) 
-                  product.name.slice(0,10) + ".."
-                else 
-                  product.name 
+                product.id,
+                if (product.name.length() > 10)
+                  product.name.slice(0, 10) + ".."
+                else
+                  product.name
               )
           }
       }, 3000.millis)
@@ -264,13 +265,13 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
       Await.result(repoProducts.listByCategory(this.category).map {
         case (productList) =>
           productList.map {
-            case (product) => 
+            case (product) =>
               (
-                product.id, 
-                if(product.name.length() > 10 ) 
-                  product.name.slice(0,10) + ".."
-                else 
-                  product.name 
+                product.id,
+                if (product.name.length() > 10)
+                  product.name.slice(0, 10) + ".."
+                else
+                  product.name
               )
           }
       }, 3000.millis)
@@ -324,8 +325,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
           selProduct.measureId, unidades(selProduct.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.CardController.show(requestObj.id))
-          }
+          Redirect(routes.CardController.show(requestObj.id))
+        }
       })
   }
 
@@ -353,8 +354,8 @@ class CardController @Inject() (repo: ProductRequestRepository, repoProducts: Pr
           res.storekeeper, storeNames(res.storekeeper.toString), res.status, res.detail, "insumo",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.ProductRequestController.show(res.id))
-          }
+          Redirect(routes.ProductRequestController.show(res.id))
+        }
       })
   }
 }

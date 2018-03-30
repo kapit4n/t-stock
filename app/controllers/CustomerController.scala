@@ -11,7 +11,7 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import it.innove.play.pdf.PdfGenerator
@@ -21,10 +21,10 @@ import security.MyDeadboltHandler
 import play.i18n.Lang
 
 
-class CustomerController @Inject() (
-  repo: CustomerRepository, repoRequests: RequestRowCustomerRepository,
-  repoCustomer: CustomerRepository, repoDiscount: DiscountDetailRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class CustomerController @Inject()(
+                                    repo: CustomerRepository, repoRequests: RequestRowCustomerRepository,
+                                    repoCustomer: CustomerRepository, repoDiscount: DiscountDetailRepository,
+                                    val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   var interval = 30
   var updatedRow: Customer = _
@@ -115,8 +115,8 @@ class CustomerController @Inject() (
           res.account,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.CustomerController.show(resNew.id))
-          }
+          Redirect(routes.CustomerController.show(resNew.id))
+        }
       })
   }
 
@@ -234,19 +234,19 @@ class CustomerController @Inject() (
           res.totalDebt,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.CustomerController.show(res.id))
-          }
+          Redirect(routes.CustomerController.show(res.id))
+        }
       })
   }
 }
 
 case class CreateCustomerForm(
-  name: String, carnet: Int, phone: Int,
-  address: String, account: String)
+                               name: String, carnet: Int, phone: Int,
+                               address: String, account: String)
 
 case class UpdateCustomerForm(
-  id: Long, name: String, carnet: Int, phone: Int,
-  address: String, account: String,
-  totalDebt: Double)
+                               id: Long, name: String, carnet: Int, phone: Int,
+                               address: String, account: String,
+                               totalDebt: Double)
 
 case class SearchCustomerForm(search: String)

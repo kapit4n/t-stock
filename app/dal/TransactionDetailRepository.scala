@@ -1,21 +1,21 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.TransactionDetail
 import models.Transaction
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class TransactionDetailRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class TransactionDetailRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -24,13 +24,21 @@ class TransactionDetailRepository @Inject() (dbConfigProvider: DatabaseConfigPro
   private class TransactionDetailsTable(tag: Tag) extends Table[TransactionDetail](tag, "transactionDetail") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def transactionId = column[Long]("transaction")
+
     def accountId = column[Long]("account")
+
     def debit = column[Double]("debit")
+
     def credit = column[Double]("credit")
+
     def transactionDate = column[String]("transactionDate")
+
     def accountCode = column[String]("accountCode")
+
     def accountName = column[String]("accountName")
+
     def * = (id, transactionId, accountId, debit, credit, transactionDate, accountCode, accountName) <> ((TransactionDetail.apply _).tupled, TransactionDetail.unapply)
   }
 
@@ -66,27 +74,27 @@ class TransactionDetailRepository @Inject() (dbConfigProvider: DatabaseConfigPro
   }
 
   def updateTransactionParams(id: Long, transactionDate: String) = {
-    val q = for { c <- tableQ if c.id === id } yield c.transactionDate
+    val q = for {c <- tableQ if c.id === id} yield c.transactionDate
     db.run(q.update(transactionDate))
   }
 
   def updateAccountParams(id: Long, accountCode: String, accountName: String) = {
-    val q = for { c <- tableQ if c.id === id } yield c.accountCode
+    val q = for {c <- tableQ if c.id === id} yield c.accountCode
     db.run(q.update(accountCode))
-    val q1 = for { c <- tableQ if c.id === id } yield c.accountName
+    val q1 = for {c <- tableQ if c.id === id} yield c.accountName
     db.run(q1.update(accountName))
   }
 
   // update required to copy
   def update(id: Long, transactionId: Long, accountId: Long, debit: Double, credit: Double, userId: Long, userName: String): Future[Seq[TransactionDetail]] = db.run {
     repoLog.createLogEntry(repoLog.UPDATE, repoLog.TRANSACTION_DETAIL, userId, userName, accountId.toString);
-    val q = for { c <- tableQ if c.id === id } yield c.transactionId
+    val q = for {c <- tableQ if c.id === id} yield c.transactionId
     db.run(q.update(transactionId))
-    val q2 = for { c <- tableQ if c.id === id } yield c.accountId
+    val q2 = for {c <- tableQ if c.id === id} yield c.accountId
     db.run(q2.update(accountId))
-    val q3 = for { c <- tableQ if c.id === id } yield c.debit
+    val q3 = for {c <- tableQ if c.id === id} yield c.debit
     db.run(q3.update(debit))
-    val q4 = for { c <- tableQ if c.id === id } yield c.credit
+    val q4 = for {c <- tableQ if c.id === id} yield c.credit
     db.run(q4.update(credit))
     tableQ.filter(_.id === id).result
   }

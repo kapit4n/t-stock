@@ -1,20 +1,20 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.Report
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class ReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class ReportRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,9 +23,13 @@ class ReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(impl
   private class ReportsTable(tag: Tag) extends Table[Report](tag, "reportes") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def monto = column[Int]("monto")
+
     def account = column[Int]("account")
+
     def cliente = column[Int]("cliente")
+
     def * = (id, monto, account, cliente) <> ((Report.apply _).tupled, Report.unapply)
   }
 

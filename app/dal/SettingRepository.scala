@@ -1,20 +1,20 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.Setting
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class SettingRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class SettingRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,10 +23,15 @@ class SettingRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(imp
   private class SettingsTable(tag: Tag) extends Table[Setting](tag, "setting") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("name")
+
     def president = column[String]("president")
+
     def language = column[String]("language")
+
     def description = column[String]("description")
+
     def * = (id, name, president, language, description) <> ((Setting.apply _).tupled, Setting.unapply)
   }
 
@@ -50,13 +55,13 @@ class SettingRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(imp
 
   // update required to copy
   def update(id: Long, name: String, president: String, language: String, description: String): Future[Seq[Setting]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.name
+    val q = for {c <- tableQ if c.id === id} yield c.name
     db.run(q.update(name))
-    val q2 = for { c <- tableQ if c.id === id } yield c.president
+    val q2 = for {c <- tableQ if c.id === id} yield c.president
     db.run(q2.update(president))
-    val q3 = for { c <- tableQ if c.id === id } yield c.language
+    val q3 = for {c <- tableQ if c.id === id} yield c.language
     db.run(q3.update(language))
-    val q4 = for { c <- tableQ if c.id === id } yield c.description
+    val q4 = for {c <- tableQ if c.id === id} yield c.description
     db.run(q4.update(description))
     tableQ.filter(_.id === id).result
   }

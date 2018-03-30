@@ -1,22 +1,22 @@
 package dal
 
 import scala.concurrent.duration._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.LogEntry
 import models.LogEntryShow
 
-import scala.concurrent.{ Future, ExecutionContext, Await }
+import scala.concurrent.{Future, ExecutionContext, Await}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class LogEntryRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
 
   val ACCOUNT = "Account"
   val ASSOCIATION = "Company"
@@ -54,24 +54,39 @@ class LogEntryRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(im
 
   private class LogEntrysTable(tag: Tag) extends Table[LogEntry](tag, "logEntry") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def action = column[String]("action")
+
     def tableName1 = column[String]("tableName1")
+
     def userId = column[Long]("userId")
+
     def userName = column[String]("userName")
+
     def description = column[String]("description")
+
     def link = column[String]("link")
+
     def * = (id, action, tableName1, userId, userName, description, link) <> ((LogEntry.apply _).tupled, LogEntry.unapply)
   }
 
   private class LogEntrysShowTable(tag: Tag) extends Table[LogEntryShow](tag, "logEntry") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def action = column[String]("action")
+
     def tableName1 = column[String]("tableName1")
+
     def userId = column[Long]("userId")
+
     def userName = column[String]("userName")
+
     def description = column[String]("description")
+
     def link = column[String]("link")
+
     def createdAt = column[String]("createdAt")
+
     def * = (id, action, tableName1, userId, userName, description, link, createdAt) <> ((LogEntryShow.apply _).tupled, LogEntryShow.unapply)
   }
 

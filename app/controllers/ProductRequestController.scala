@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -20,9 +20,9 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
-  repoSto: UserRepository, repoInsUser: UserRepository,
-  val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class ProductRequestController @Inject()(repo: ProductRequestRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
+                                         repoSto: UserRepository, repoInsUser: UserRepository,
+                                         val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateProductRequestForm] = Form {
     mapping(
@@ -64,8 +64,8 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
           res.status, res.detail, "veterinaria",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.ProductRequestController.show(resNew.id))
-          }
+          Redirect(routes.ProductRequestController.show(resNew.id))
+        }
       })
   }
 
@@ -119,6 +119,7 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
   }
 
   var updatedId: Long = 0
+
   // update required
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     updatedId = id;
@@ -156,7 +157,7 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -168,7 +169,7 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -180,7 +181,7 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -192,7 +193,7 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
       case (res1) =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { user =>
-          cache put (user.id.toString, user.name)
+          cache put(user.id.toString, user.name)
         }
 
         cache.toMap
@@ -229,8 +230,8 @@ class ProductRequestController @Inject() (repo: ProductRequestRepository, repoRo
           res.storekeeper, storeNames(res.storekeeper.toString), res.status, res.detail, "insumo",
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.ProductRequestController.show(res.id))
-          }
+          Redirect(routes.ProductRequestController.show(res.id))
+        }
       })
   }
 }

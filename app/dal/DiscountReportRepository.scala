@@ -1,20 +1,20 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.DiscountReport
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class DiscountReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class DiscountReportRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,10 +23,15 @@ class DiscountReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
   private class DiscountReportTable(tag: Tag) extends Table[DiscountReport](tag, "discountReport") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def startDate = column[String]("startDate")
+
     def endDate = column[String]("endDate")
+
     def status = column[String]("status")
+
     def total = column[Double]("total")
+
     def * = (id, startDate, endDate, status, total) <> ((DiscountReport.apply _).tupled, DiscountReport.unapply)
   }
 
@@ -62,34 +67,34 @@ class DiscountReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
 
   // update required to copy
   def update(id: Long, startDate: String, endDate: String, status: String, total: Double): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.startDate
+    val q = for {c <- tableQ if c.id === id} yield c.startDate
     db.run(q.update(startDate))
-    val q2 = for { c <- tableQ if c.id === id } yield c.endDate
+    val q2 = for {c <- tableQ if c.id === id} yield c.endDate
     db.run(q2.update(endDate))
-    val q3 = for { c <- tableQ if c.id === id } yield c.status
+    val q3 = for {c <- tableQ if c.id === id} yield c.status
     db.run(q3.update(status))
-    val q4 = for { c <- tableQ if c.id === id } yield c.total
+    val q4 = for {c <- tableQ if c.id === id} yield c.total
     db.run(q4.update(total))
     tableQ.filter(_.id === id).result
   }
 
   // Update the status to enviado status
   def sendById(id: Long): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     db.run(q.update("enviado"))
     tableQ.filter(_.id === id).result
   }
 
   // Update the status to enviado status
   def finalizeById(id: Long): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     db.run(q.update("finalizado"))
     tableQ.filter(_.id === id).result
   }
 
   // Update the status to finalizado status
   def finishById(id: Long): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.status
+    val q = for {c <- tableQ if c.id === id} yield c.status
     db.run(q.update("finalizado"))
     tableQ.filter(_.id === id).result
   }
@@ -105,15 +110,16 @@ class DiscountReportRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
 
   // Update the status to enviado status
   def updateTotal(id: Long, monto: Double): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.total
+    val q = for {c <- tableQ if c.id === id} yield c.total
     getById(id).map { row =>
       db.run(q.update(monto))
     }
     tableQ.filter(_.id === id).result
   }
+
   // Update the status to enviado status
   def addToTotal(id: Long, monto: Double): Future[Seq[DiscountReport]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.total
+    val q = for {c <- tableQ if c.id === id} yield c.total
     getById(id).map { rows =>
       db.run(q.update(monto + rows(0).total))
     }

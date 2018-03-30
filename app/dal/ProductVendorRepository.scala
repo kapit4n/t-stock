@@ -1,23 +1,23 @@
 package dal
 
 import scala.concurrent.duration._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.ProductVendor
 import models.Roles
 
-import scala.concurrent.{ Future, ExecutionContext, Await }
+import scala.concurrent.{Future, ExecutionContext, Await}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvider,
-        repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class ProductVendorRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
+                                        repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -25,9 +25,13 @@ class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvide
 
   private class ProductVendorsTable(tag: Tag) extends Table[ProductVendor](tag, "productVendor") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def productId = column[Long]("productId")
+
     def vendorId = column[Long]("vendorId")
+
     def cost = column[Double]("cost")
+
     def * = (id, productId, vendorId, cost) <> ((ProductVendor.apply _).tupled, ProductVendor.unapply)
   }
 
@@ -70,7 +74,7 @@ class ProductVendorRepository @Inject() (dbConfigProvider: DatabaseConfigProvide
   def update(id: Long, cost: Double, userId: Long, userName: String): Future[Seq[ProductVendor]] = db.run {
     repoLog.createLogEntry(repoLog.UPDATE, repoLog.PRODUCT_VENDOR, userId, userName, cost.toString())
 
-    val q = for { c <- tableProductVendor if c.id === id } yield c.cost
+    val q = for {c <- tableProductVendor if c.id === id} yield c.cost
     db.run(q.update(cost))
     tableProductVendor.filter(_.id === id).result
   }

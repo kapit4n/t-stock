@@ -11,13 +11,13 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 
 import javax.inject._
 import it.innove.play.pdf.PdfGenerator
 import security.MyDeadboltHandler
 
-class LoginController @Inject() (repo: UserRepository, repoSettings: SettingRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class LoginController @Inject()(repo: UserRepository, repoSettings: SettingRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[LoginForm] = Form {
     mapping(

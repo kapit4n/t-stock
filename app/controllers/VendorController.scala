@@ -10,13 +10,13 @@ import play.api.libs.json.Json
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class VendorController @Inject() (repo: VendorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class VendorController @Inject()(repo: VendorRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateVendorForm] = Form {
     mapping(
@@ -48,8 +48,8 @@ class VendorController @Inject() (repo: VendorRepository, val messagesApi: Messa
           vendor.contact, vendor.account,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            Redirect(routes.VendorController.show(resNew.id))
-          }
+          Redirect(routes.VendorController.show(resNew.id))
+        }
       })
   }
 
@@ -119,8 +119,8 @@ class VendorController @Inject() (repo: VendorRepository, val messagesApi: Messa
           res.contact, res.account,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-            Redirect(routes.VendorController.show(res.id))
-          }
+          Redirect(routes.VendorController.show(res.id))
+        }
       })
   }
 }

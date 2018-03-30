@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,9 +21,9 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository, repoRequestRow: RequestRowRepository,
-  repoProduct: ProductRepository, repoDriver: CustomerRepository, repoCustomer: CustomerRepository,
-  repoUnit: MeasureRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class RequestRowCustomerController @Inject()(repo: RequestRowCustomerRepository, repoRequestRow: RequestRowRepository,
+                                             repoProduct: ProductRepository, repoDriver: CustomerRepository, repoCustomer: CustomerRepository,
+                                             repoUnit: MeasureRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateRequestRowCustomerForm] = Form {
     mapping(
@@ -84,7 +84,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
         cache.toMap
     }, 3000.millis)
@@ -129,10 +129,10 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
           res.customerId, customers(res.customerId.toString()),
           res.quantity, res.price, res.totalPrice, res.paid, res.credit, res.status, res.measureId,
           measures(res.measureId.toString()), customerType, res.observation).map { resNew =>
-            repoCustomer.updateTotalDebt(res.customerId, res.credit) // in customer table
-            repoRequestRow.updateRequestRow(res.requestRowId, res.paid, res.credit) // in request row table
-            Redirect(routes.RequestRowCustomerController.show(resNew.id))
-          }
+          repoCustomer.updateTotalDebt(res.customerId, res.credit) // in customer table
+          repoRequestRow.updateRequestRow(res.requestRowId, res.paid, res.credit) // in request row table
+          Redirect(routes.RequestRowCustomerController.show(resNew.id))
+        }
       })
   }
 
@@ -150,10 +150,10 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
           0, 0, res.paid, res.paid, 0,
           res.status, res.measureId, measures(res.measureId.toString()),
           driverType, res.observation).map { resNew =>
-            //repoCustomer.updateTotalDebt(res.customerId, res.credit);
-            repoRequestRow.updateRequestRowDriver(res.requestRowId, res.paid, res.credit)
-            Redirect(routes.RequestRowCustomerController.show(resNew.id))
-          }
+          //repoCustomer.updateTotalDebt(res.customerId, res.credit);
+          repoRequestRow.updateRequestRowDriver(res.requestRowId, res.paid, res.credit)
+          Redirect(routes.RequestRowCustomerController.show(resNew.id))
+        }
       })
   }
 
@@ -250,7 +250,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
     Await.result(repoRequestRow.getById(requestRowId).map { res =>
       val cache = collection.mutable.Map[String, String]()
       res.foreach { requestRow =>
-        cache put (requestRow.id.toString, requestRow.id.toString() + ": " + requestRow.productName)
+        cache put(requestRow.id.toString, requestRow.id.toString() + ": " + requestRow.productName)
       }
       cache.toMap
     }, 3000.millis)
@@ -260,7 +260,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
     Await.result(repoProduct.getById(id).map { res1 =>
       val cache = collection.mutable.Map[String, String]()
       res1.foreach { product =>
-        cache put (product.id.toString(), product.name)
+        cache put(product.id.toString(), product.name)
       }
       cache.toMap
     }, 3000.millis)
@@ -276,7 +276,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
     Await.result(repoProduct.getById(id).map { res1 =>
       val cache = collection.mutable.Map[String, String]()
       res1.foreach { product =>
-        cache put (product.id.toString(), product.name)
+        cache put(product.id.toString(), product.name)
       }
       cache.toMap
     }, 3000.millis)
@@ -288,7 +288,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -301,7 +301,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -313,7 +313,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
       case res1 =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { product =>
-          cache put (product.id.toString, product.name)
+          cache put(product.id.toString, product.name)
         }
         cache.toMap
     }, 3000.millis)
@@ -324,7 +324,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
       case res1 =>
         val cache = collection.mutable.Map[String, String]()
         res1.foreach { driver =>
-          cache put (driver.id.toString, driver.name)
+          cache put(driver.id.toString, driver.name)
         }
         cache.toMap
     }, 3000.millis)
@@ -400,9 +400,9 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
           customers(res.customerId.toString), res.quantity, res.price, res.totalPrice, res.paid,
           res.credit, res.status, res.measureId, measures(res.measureId.toString()),
           customerType, res.observation).map { _ =>
-            repoRequestRow.updateRequestRow(res.requestRowId, res.paid - updatedRow.paid, res.credit - updatedRow.credit) // in request row table
-            Redirect(routes.RequestRowCustomerController.show(res.id))
-          }
+          repoRequestRow.updateRequestRow(res.requestRowId, res.paid - updatedRow.paid, res.credit - updatedRow.credit) // in request row table
+          Redirect(routes.RequestRowCustomerController.show(res.id))
+        }
       })
   }
 
@@ -417,9 +417,9 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
           drivers(res.customerId.toString), res.quantity, 0, res.totalPrice, res.paid,
           res.credit, res.status, res.measureId, measures(res.measureId.toString()),
           driverType, res.observation).map { _ =>
-            repoRequestRow.updateRequestRowDriver(res.requestRowId, res.paid - updatedRow.paid, res.credit - updatedRow.credit) // in request row table
-            Redirect(routes.RequestRowCustomerController.show(res.id))
-          }
+          repoRequestRow.updateRequestRowDriver(res.requestRowId, res.paid - updatedRow.paid, res.credit - updatedRow.credit) // in request row table
+          Redirect(routes.RequestRowCustomerController.show(res.id))
+        }
       })
   }
 
@@ -439,7 +439,7 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
         repoCustomer.searchCustomer(res.search).map { resCustomers =>
           val cache = collection.mutable.Map[String, String]()
           resCustomers.map { customer =>
-            cache put (customer.id.toString(), customer.account.toString + ": " + customer.name.toString)
+            cache put(customer.id.toString(), customer.account.toString + ": " + customer.name.toString)
           }
           customers = cache.toMap
           Ok(views.html.order.requestRowCustomer_add(new MyDeadboltHandler, parentId, searchCustomerForm, newForm, requestRows, products, currentProduct, customers, measures))
@@ -449,21 +449,21 @@ class RequestRowCustomerController @Inject() (repo: RequestRowCustomerRepository
 }
 
 case class CreateRequestRowCustomerForm(requestRowId: Long, productId: Long,
-  customerId: Long, quantity: Int,
-  price: Double, totalPrice: Double, paid: Double, credit: Double, status: String,
-  measureId: Long, observation: String)
+                                        customerId: Long, quantity: Int,
+                                        price: Double, totalPrice: Double, paid: Double, credit: Double, status: String,
+                                        measureId: Long, observation: String)
 
 case class CreateRequestRowDriverForm(requestRowId: Long, productId: Long,
-  customerId: Long, quantity: Int,
-  totalPrice: Double, paid: Double, credit: Double, status: String,
-  measureId: Long, observation: String)
+                                      customerId: Long, quantity: Int,
+                                      totalPrice: Double, paid: Double, credit: Double, status: String,
+                                      measureId: Long, observation: String)
 
 case class UpdateRequestRowCustomerForm(id: Long, requestRowId: Long, productId: Long,
-  customerId: Long, quantity: Int,
-  price: Double, totalPrice: Double, paid: Double, credit: Double, status: String,
-  measureId: Long, observation: String)
+                                        customerId: Long, quantity: Int,
+                                        price: Double, totalPrice: Double, paid: Double, credit: Double, status: String,
+                                        measureId: Long, observation: String)
 
 case class UpdateRequestRowDriverForm(id: Long, requestRowId: Long, productId: Long,
-  customerId: Long, quantity: Int,
-  totalPrice: Double, paid: Double, credit: Double, status: String,
-  measureId: Long, observation: String)
+                                      customerId: Long, quantity: Int,
+                                      totalPrice: Double, paid: Double, credit: Double, status: String,
+                                      measureId: Long, observation: String)

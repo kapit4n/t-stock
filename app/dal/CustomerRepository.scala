@@ -1,21 +1,21 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
 import models.Customer
 import models.Company
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
+class CustomerRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoLog: LogEntryRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -23,13 +23,21 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
 
   private class CustomeresTable(tag: Tag) extends Table[Customer](tag, "customer") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("name")
+
     def carnet = column[Int]("carnet")
+
     def phone = column[Int]("phone")
+
     def address = column[String]("address")
+
     def account = column[String]("account")
+
     def companyName = column[String]("companyName")
+
     def totalDebt = column[Double]("totalDebt")
+
     def * = (
       id, name, carnet, phone, address, account,
       companyName, totalDebt) <> ((Customer.apply _).tupled, Customer.unapply)
@@ -37,7 +45,9 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
 
   private class CompanysTable(tag: Tag) extends Table[Company](tag, "company") {
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def name = column[String]("name")
+
     def * = (
       id, name) <> ((Company.apply _).tupled, Company.unapply)
   }
@@ -46,22 +56,22 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
   private val tableQCompany = TableQuery[CompanysTable]
 
   def create(name: String, carnet: Int, phone: Int, address: String,
-    account: String, userId: Long, userName: String): Future[Customer] = db.run {
+             account: String, userId: Long, userName: String): Future[Customer] = db.run {
     (tableQ.map(
       p => (
         p.name, p.carnet, p.phone, p.address, p.account,
         p.companyName, p.totalDebt)) returning tableQ.map(_.id) into (
-        (nameAge, id) =>{
-          repoLog.createLogEntry(id, repoLog.CREATE, repoLog.PRODUCTOR, userId, userName, name);
-          Customer(
-            id, nameAge._1, nameAge._2,
-            nameAge._3, 
-            nameAge._4, nameAge._5, nameAge._6,
-            nameAge._7)
-        }
-        )) += (
-          name, carnet, phone, address, account,
-          "", 0)
+      (nameAge, id) => {
+        repoLog.createLogEntry(id, repoLog.CREATE, repoLog.PRODUCTOR, userId, userName, name);
+        Customer(
+          id, nameAge._1, nameAge._2,
+          nameAge._3,
+          nameAge._4, nameAge._5, nameAge._6,
+          nameAge._7)
+      }
+      )) += (
+      name, carnet, phone, address, account,
+      "", 0)
   }
 
   def list(start: Int, interval: Int): Future[Seq[Customer]] = db.run {
@@ -87,22 +97,22 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
 
   // update required to copy
   def update(
-    id: Long, name: String, carnet: Int, phone: Int,
-    address: String, account: String, companyName: String,
-    totalDebt: Double, 
-    userId: Long, userName: String): Future[Seq[Customer]] = db.run {
+              id: Long, name: String, carnet: Int, phone: Int,
+              address: String, account: String, companyName: String,
+              totalDebt: Double,
+              userId: Long, userName: String): Future[Seq[Customer]] = db.run {
     repoLog.createLogEntry(id, repoLog.UPDATE, repoLog.PRODUCTOR, userId, userName, name);
-    val q = for { c <- tableQ if c.id === id } yield c.name
+    val q = for {c <- tableQ if c.id === id} yield c.name
     db.run(q.update(name))
-    val q2 = for { c <- tableQ if c.id === id } yield c.carnet
+    val q2 = for {c <- tableQ if c.id === id} yield c.carnet
     db.run(q2.update(carnet))
-    val q3 = for { c <- tableQ if c.id === id } yield c.phone
+    val q3 = for {c <- tableQ if c.id === id} yield c.phone
     db.run(q3.update(phone))
-    val q4 = for { c <- tableQ if c.id === id } yield c.account
+    val q4 = for {c <- tableQ if c.id === id} yield c.account
     db.run(q4.update(account))
-    val q6 = for { c <- tableQ if c.id === id } yield c.address
+    val q6 = for {c <- tableQ if c.id === id} yield c.address
     db.run(q6.update(address))
-    val q8 = for { c <- tableQ if c.id === id } yield c.totalDebt
+    val q8 = for {c <- tableQ if c.id === id} yield c.totalDebt
     db.run(q8.update(totalDebt))
     tableQ.filter(_.id === id).result
   }
@@ -145,7 +155,7 @@ class CustomerRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, re
 
   // Update the status to enviado status
   def updateTotalDebt(id: Long, monto: Double): Future[Seq[Customer]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.totalDebt
+    val q = for {c <- tableQ if c.id === id} yield c.totalDebt
     getById(id).map { row =>
       db.run(q.update(row(0).totalDebt + monto))
     }

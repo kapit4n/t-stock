@@ -1,6 +1,6 @@
 package dal
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.JdbcProfile
 
@@ -9,15 +9,15 @@ import models.RequestRow
 import models.RequestRowCustomer
 import models.Customer
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
- * A repository for people.
- *
- * @param dbConfigProvider The Play db config provider. Play will inject this for you.
- */
+  * A repository for people.
+  *
+  * @param dbConfigProvider The Play db config provider. Play will inject this for you.
+  */
 @Singleton
-class DiscountDetailRepository @Inject() (dbConfigProvider: DatabaseConfigProvider, repoRequestRow: RequestRowRepository, repoCustomer: CustomerRepository, repoDiscount: DiscountReportRepository)(implicit ec: ExecutionContext) {
+class DiscountDetailRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, repoRequestRow: RequestRowRepository, repoCustomer: CustomerRepository, repoDiscount: DiscountReportRepository)(implicit ec: ExecutionContext) {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -26,12 +26,19 @@ class DiscountDetailRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
   private class DiscountDetailsTable(tag: Tag) extends Table[DiscountDetail](tag, "discountDetail") {
 
     def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+
     def discountReport = column[Long]("discountReport")
+
     def customerId = column[Long]("customerId")
+
     def customerName = column[String]("customerName")
+
     def status = column[String]("status")
+
     def discount = column[Double]("discount")
+
     def requestRow = column[Long]("requestRow")
+
     def * = (id, discountReport, customerId, customerName, status, discount, requestRow) <> ((DiscountDetail.apply _).tupled, DiscountDetail.unapply)
   }
 
@@ -91,15 +98,15 @@ class DiscountDetailRepository @Inject() (dbConfigProvider: DatabaseConfigProvid
 
   // update required to copy
   def update(id: Long, discountReport: Long, customerId: Long, customerName: String, status: String, discount: Double): Future[Seq[DiscountDetail]] = db.run {
-    val q = for { c <- tableQ if c.id === id } yield c.discountReport
+    val q = for {c <- tableQ if c.id === id} yield c.discountReport
     db.run(q.update(discountReport))
-    val q2 = for { c <- tableQ if c.id === id } yield c.customerId
+    val q2 = for {c <- tableQ if c.id === id} yield c.customerId
     db.run(q2.update(customerId))
-    val q31 = for { c <- tableQ if c.id === id } yield c.customerName
+    val q31 = for {c <- tableQ if c.id === id} yield c.customerName
     db.run(q31.update(customerName))
-    val q3 = for { c <- tableQ if c.id === id } yield c.status
+    val q3 = for {c <- tableQ if c.id === id} yield c.status
     db.run(q3.update(status))
-    val q4 = for { c <- tableQ if c.id === id } yield c.discount
+    val q4 = for {c <- tableQ if c.id === id} yield c.discount
     db.run(q4.update(discount))
     tableQ.filter(_.id === id).result
   }

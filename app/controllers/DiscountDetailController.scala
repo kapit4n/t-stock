@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,8 +21,8 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDiscReport: DiscountReportRepository,
-  repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class DiscountDetailController @Inject()(repo: DiscountDetailRepository, repoDiscReport: DiscountReportRepository,
+                                         repoCustomer: CustomerRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   val newForm: Form[CreateDiscountDetailForm] = Form {
     mapping(
@@ -56,9 +56,9 @@ class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDi
         repo.create(
           res.discountReport, res.customerId,
           productName, res.status, res.discount).map { resNew =>
-            repoDiscReport.addToTotal(resNew.discountReport, resNew.discount);
-            Redirect(routes.DiscountReportController.show(res.discountReport))
-          }
+          repoDiscReport.addToTotal(resNew.discountReport, resNew.discount);
+          Redirect(routes.DiscountReportController.show(res.discountReport))
+        }
       })
   }
 
@@ -71,7 +71,7 @@ class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDi
         repoCustomer.searchCustomerDebs(res.search).map { resCustomers =>
           val cache = collection.mutable.Map[String, String]()
           resCustomers.map { customer =>
-            cache put (customer.id.toString(), customer.account.toString + ": " + customer.name.toString)
+            cache put(customer.id.toString(), customer.account.toString + ": " + customer.name.toString)
           }
           customers = cache.toMap
           Ok(views.html.discount.discountDetail_add(new MyDeadboltHandler, discountId, newForm, discountsNames, customers))
@@ -146,7 +146,7 @@ class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDi
     Await.result(repoDiscReport.getById(parentId).map { res =>
       val cache = collection.mutable.Map[String, String]()
       res.foreach { parent =>
-        cache put (parent.id.toString(), parent.id.toString)
+        cache put(parent.id.toString(), parent.id.toString)
       }
       cache.toMap
     }, 100.millis)
@@ -156,7 +156,7 @@ class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDi
     Await.result(repoCustomer.getById(customerId).map { customers =>
       val cache = collection.mutable.Map[String, String]()
       customers.foreach { customer =>
-        cache put (customer.id.toString(), customer.account + ": " + customer.name)
+        cache put(customer.id.toString(), customer.account + ": " + customer.name)
       }
       cache.toMap
     }, 500.millis)
@@ -166,7 +166,7 @@ class DiscountDetailController @Inject() (repo: DiscountDetailRepository, repoDi
     Await.result(repoCustomer.list100CustomersDebt().map { customers =>
       val cache = collection.mutable.Map[String, String]()
       customers.foreach { customer =>
-        cache put (customer.id.toString(), customer.account + ": " + customer.name)
+        cache put(customer.id.toString(), customer.account + ": " + customer.name)
       }
       cache.toMap
     }, 2000.millis)

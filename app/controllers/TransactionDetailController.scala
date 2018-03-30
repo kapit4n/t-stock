@@ -10,7 +10,7 @@ import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
-import scala.concurrent.{ ExecutionContext, Future, Await }
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.collection.mutable.ListBuffer
 import java.util.LinkedHashMap
 import collection.mutable
@@ -21,8 +21,8 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class TransactionDetailController @Inject() (repo: TransactionDetailRepository, repoTransaction: TransactionRepository,
-  repoAccounts: AccountRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
+class TransactionDetailController @Inject()(repo: TransactionDetailRepository, repoTransaction: TransactionRepository,
+                                            repoAccounts: AccountRepository, val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
   var updatedRow: TransactionDetail = _
   var parentId: Long = _
@@ -49,14 +49,14 @@ class TransactionDetailController @Inject() (repo: TransactionDetailRepository, 
           res.transactionId, res.accountId, res.debit, res.credit,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
-            repoAccounts.updateParentDebitCredit(res.accountId, res.debit, res.credit);
-            repoTransaction.getById(res.transactionId).map { res => repo.updateTransactionParams(resNew.id, res(0).date)
-            }
-
-            repoAccounts.getById(res.accountId).map { res => repo.updateAccountParams(resNew.id, res(0).code, res(0).name)
-            }
-            Redirect(routes.TransactionDetailController.show(resNew.id))
+          repoAccounts.updateParentDebitCredit(res.accountId, res.debit, res.credit);
+          repoTransaction.getById(res.transactionId).map { res => repo.updateTransactionParams(resNew.id, res(0).date)
           }
+
+          repoAccounts.getById(res.accountId).map { res => repo.updateAccountParams(resNew.id, res(0).code, res(0).name)
+          }
+          Redirect(routes.TransactionDetailController.show(resNew.id))
+        }
       })
   }
 
@@ -133,7 +133,7 @@ class TransactionDetailController @Inject() (repo: TransactionDetailRepository, 
         val cache = collection.mutable.Map[String, String]()
         res1.foreach {
           case (key: Long, value: String) =>
-            cache put (key.toString(), value)
+            cache put(key.toString(), value)
         }
 
         cache.toMap
@@ -145,7 +145,7 @@ class TransactionDetailController @Inject() (repo: TransactionDetailRepository, 
     Await.result(repoAccounts.getChilAccountsByType(type_1).map {
       case (res1) =>
         res1.foreach { res2 =>
-          cache put (res2.id.toString(), res2.code + " " + res2.name)
+          cache put(res2.id.toString(), res2.code + " " + res2.name)
         }
     }, 1000.millis)
     cache.toMap
@@ -156,7 +156,7 @@ class TransactionDetailController @Inject() (repo: TransactionDetailRepository, 
     Await.result(repoAccounts.getListObjsChild().map {
       case (res1) =>
         res1.foreach { res2 =>
-          cache put (res2.id.toString(), res2.code + " " + res2.name)
+          cache put(res2.id.toString(), res2.code + " " + res2.name)
         }
     }, 1000.millis)
     cache.toMap
@@ -198,9 +198,9 @@ class TransactionDetailController @Inject() (repo: TransactionDetailRepository, 
           res.id, res.transactionId, res.accountId, res.debit, res.credit,
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resUpdated =>
-            repoAccounts.updateParentDebitCredit(res.accountId, res.debit - updatedRow.debit, res.credit - updatedRow.credit);
-            Redirect(routes.TransactionDetailController.show(res.id))
-          }
+          repoAccounts.updateParentDebitCredit(res.accountId, res.debit - updatedRow.debit, res.credit - updatedRow.credit);
+          Redirect(routes.TransactionDetailController.show(res.id))
+        }
       })
   }
 }
