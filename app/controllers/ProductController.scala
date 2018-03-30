@@ -80,6 +80,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
   var products: Seq[Product] = _
 
   def index = LanguageAction.async { implicit request =>
+    repo.joinExample()
     repo.list().map { res =>
       products = res
       Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
@@ -94,6 +95,8 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
   }
 
   def list = LanguageAction { implicit request =>
+    
+    
     Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
   }
 
