@@ -1,6 +1,5 @@
 package controllers
 
-import scala.concurrent.duration._
 import play.api._
 import play.api.mvc._
 import play.api.i18n._
@@ -8,21 +7,22 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
+import play.api.data.format.Formats._
+import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future, Await }
+import javax.inject._
+import be.objectify.deadbolt.scala.DeadboltActions
+import security.MyDeadboltHandler
 import models._
 import dal._
 
-import scala.concurrent.{ ExecutionContext, Future, Await }
-
-import javax.inject._
-import play.api.data.format.Formats._
-import be.objectify.deadbolt.scala.DeadboltActions
-import security.MyDeadboltHandler
-
+/** Product controller to handler product routes and operations on it */
 class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRepository,
                                   repoProductVendor: ProductVendorRepository, repoProdInv: ProductInvRepository,
                               repoUnit: MeasureRepository, val messagesApi: MessagesApi)
                               (implicit ec: ExecutionContext) extends Controller with I18nSupport {
 
+  /** Form to create a new Product */
   val newForm: Form[CreateProductForm] = Form {
     mapping(
       "name" -> nonEmptyText,
@@ -41,11 +41,16 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
   }
 
   var measures = getMeasureMap()
-  var productId: Long = _
+  var products: Seq[Product] = _
   var vendors: Seq[Vendor] = _
   var vendorsAssigned: Seq[Vendor] = _
+  var productId: Long = _
   var children: Seq[ProductInv] = _
   val categories = scala.collection.immutable.Map[String, String]("MILK" -> "MILK", "GADGET" -> "GADGET")
+  var updatedRow: Product = _
+  var updatedProductVendorRow: ProductVendor = _
+
+  /** Gets measure form the database and return a map with id and name of them */
   def getMeasureMap(): Map[String, String] = {
     Await.result(repoUnit.getListNames().map {
       case (res1) =>
@@ -59,26 +64,25 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }, 3000.millis)
   }
 
+  /** Renders the product create page */
   def addGet = LanguageAction { implicit request =>
     measures = getMeasureMap()
     Ok(views.html.product.product_add(new MyDeadboltHandler, newForm, measures, categories))
   }
 
-  // to copy
+  /** Assign vendor to product and return to product show page */
   def assignVendor(productId: Long, vendorId: Long) = LanguageAction.async { implicit request =>
-    //var vendor = getVendorById(vendorId)
-    repoProductVendor.createProductVendor(productId, /*vendor.name, */vendorId).map(res =>
+    repoProductVendor.createProductVendor(productId, vendorId).map(res =>
       Redirect(routes.ProductController.show(res.productId)))
   }
 
-  // to copy
+  /** Remove relation between vendor and product, and redirect to product show page */
   def removeVendor(id: Long, vendorId: Long) = LanguageAction.async { implicit request =>
     repoProductVendor.deleteProductVendor(id, vendorId).map(res =>
       Redirect(routes.ProductController.show(productId)))
   }
 
-  var products: Seq[Product] = _
-
+  /** Goes to product product list page */
   def index = LanguageAction.async { implicit request =>
     repo.joinExample()
     repo.list().map { res =>
@@ -87,6 +91,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }
   }
 
+  /** Get the product that are on the minimum quantity to reorder */
   def reorder_index = LanguageAction.async { implicit request =>
     repo.reorder_list().map { res =>
       products = res
@@ -94,12 +99,14 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }
   }
 
+  /** List page */
   def list = LanguageAction { implicit request =>
     
     
     Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
   }
 
+  /** Saves a new product to the database */
   def addProduct = LanguageAction.async { implicit request =>
     newForm.bindFromRequest.fold(
       errorForm => {
@@ -119,12 +126,14 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       })
   }
 
+  /** Return a list of products that match with seach param */
   def searchProduct(search: String): Seq[Product] = {
     Await.result(repo.searchProduct(search).map { res =>
       res
     }, 1000.millis)
   }
 
+  /** Get total count of products */
   def getTotal(): Int = {
     Await.result(repo.getTotal().map {
       case (res1) =>
@@ -132,6 +141,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }, 3000.millis)
   }
 
+  /** Applies the search criteria to the list shown in the list page */
   def searchProductPost = LanguageAction.async { implicit request =>
     var total = getTotal()
     var currentPage = 1
@@ -145,13 +155,14 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       })
   }
 
+  /** Get the list of products on json format */
   def getProducts = LanguageAction.async {
     repo.list().map { insumos =>
       Ok(Json.toJson(insumos))
     }
   }
 
-  // update required
+  /** Form to work with update product page */
   val updateForm: Form[UpdateProductForm] = Form {
     mapping(
       "id" -> longNumber,
@@ -166,6 +177,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       "category" -> text)(UpdateProductForm.apply)(UpdateProductForm.unapply)
   }
 
+  /** Form to work with product vendor relation */
   val updateProductVendorForm: Form[UpdateProductVendorForm] = Form {
     mapping(
       "id" -> longNumber,
@@ -175,30 +187,35 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       )(UpdateProductVendorForm.apply)(UpdateProductVendorForm.unapply)
   }
 
+ /** Get Products that has been bought */
   def getChildren(id: Long): Seq[ProductInv] = {
     Await.result(repoProdInv.listByProductId(id).map { res =>
       res
     }, 3000.millis)
   }
 
+  /** Get list of vendors availables on the system */
   def getVendors(): Seq[Vendor] = {
     Await.result(repoVendor.list().map { res =>
       res
     }, 3000.millis)
   }
 
+  /** Get vendor by Id */
   def getVendorsByIds(vendorIds: Seq[Long]): Seq[Vendor] = {
     Await.result(repoVendor.getListByIds(vendorIds).map { res =>
       res
     }, 3000.millis)
   }
 
+  /** Get vendor list that are related to the current product */
   def getVendorsByProduct(): Seq[ProductVendor] = {
     Await.result(repoProductVendor.listVendorsByProductId(productId).map { res =>
       res
     }, 3000.millis)
   }
 
+  /** Reload children, vendors, and assigned vendors rows */
   def reloadData() = {
     children = getChildren(productId)
     vendors = getVendors()
@@ -206,7 +223,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     vendorsAssigned = getVendorsByIds(vendorIds)
   }
 
-  // to copy
+  /** Renders product show page */
   def show(id: Long) = LanguageAction.async { implicit request =>
     productId = id
     reloadData()
@@ -215,9 +232,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }
   }
 
-  var updatedRow: Product = _
-
-  // update required
+  /** Render the product update page */
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     repo.getById(id).map { res =>
       updatedRow = res(0)
@@ -237,9 +252,8 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       Ok(views.html.product.product_update(new MyDeadboltHandler, updatedRow, updateForm.bind(productData), measures, categories))
     }
   }
-
-  var updatedProductVendorRow: ProductVendor = _
-
+  
+  /** Renders the product vendor relation to set the cost of the product for that vendor */
   def getProductVendorUpdate(productId: Long, vendorId: Long) = LanguageAction.async { implicit request =>
     repoProductVendor.getProductVendorById(productId, vendorId).map { res =>
       updatedProductVendorRow = res(0)
@@ -253,21 +267,21 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
     }
   }
 
-  // delete required
+  /** Deletes the product by id */
   def delete(id: Long) = LanguageAction.async {
     repo.delete(id).map { res =>
       Redirect(routes.ProductController.index)
     }
   }
 
-  // to copy
+  /** Gets product by id on json format*/
   def getById(id: Long) = LanguageAction.async {
     repo.getById(id).map { res =>
       Ok(Json.toJson(res))
     }
   }
 
-  // update required
+  /** Updates the product information */
   def updatePost = LanguageAction.async { implicit request =>
     updateForm.bindFromRequest.fold(
       errorForm => {
@@ -285,6 +299,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       })
   }
 
+  /** Updated the product vendor relation*/
   def updateProductVendorPost = LanguageAction.async { implicit request =>
     updateProductVendorForm.bindFromRequest.fold(
       errorForm => {
@@ -300,6 +315,7 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
       })
   }
 
+  /** Uploads the product image*/
   def upload(id: Long) = LanguageAction(parse.multipartFormData) { request =>
     request.body.file("picture").map { picture =>
       import java.io.File
@@ -325,17 +341,20 @@ class ProductController @Inject() (repo: ProductRepository, repoVendor: VendorRe
 
 }
 
+/** class for seach from */
 case class SearchProductForm(search: String)
 
+/** class for create form */
 case class CreateProductForm(
   name: String, cost: Double, percent: Double,
   description: String, measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
 
+/** class for update form*/
 case class UpdateProductForm(
   id: Long, name: String, cost: Double,
   percent: Double, price: Double, description: String,
   measureId: Long, currentAmount: Int, stockLimit: Int, category: String)
 
+/** class for product vendor relation form*/
 case class UpdateProductVendorForm(
   id: Long, productId: Long, vendorId: Long, cost: Double)
-

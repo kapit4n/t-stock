@@ -18,7 +18,18 @@ class IntegrationSpec extends Specification {
 
       browser.goTo("http://localhost:" + port)
 
-      browser.pageSource must contain("Add Cliente")
+      browser.pageSource must contain("Login")
     }
-  }
+    
+    "Login on the system" in new WithBrowser {
+      browser.goTo("http://localhost:" + port)
+      
+      browser.pageSource must contain("Login")
+      
+      // set login and password
+      // click on login button
+      // Assert the user information or initial page
+    }
+  }  
+  
 }
