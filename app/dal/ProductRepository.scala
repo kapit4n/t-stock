@@ -124,7 +124,7 @@ class ProductRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
   def joinExample() = {
     val implicitCrossJoin = for {
       p <- productsTable
-      m <- measuresTable
+      m <- measuresTable  if p.measureId === m.id
     } yield (p, m)
 
     db.run(implicitCrossJoin.result).map(data => println(data(0)))
