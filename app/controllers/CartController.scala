@@ -247,7 +247,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   }
 
   def getProductTuples(): Seq[(Long, String)] = {
-    if (this.category == "") {
+    if (this.category == "All") {
       Await.result(repoProducts.list().map {
         case (productList) =>
           productList.map {

@@ -5,7 +5,6 @@
 @main("view") {
 
     <div class="container">
-
         <button type="button" id="saveCart" class="btn btn-primary btn-sm">Save And Close</button>
         <script type="text/javascript">
             $("#saveCart").click(function() {
@@ -17,10 +16,7 @@
                             console.log(data);
                         });
                     });
-                } else {
-
                 }
-
             });
         </script>
 
@@ -35,101 +31,102 @@
         }
     </div>
     <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="table table-bordered">
-                <table class="table table-bordered" id="rows">
-                    <thead>
-                        <tr>
-                            <th>@messages("id")</th>
-                            <th>@messages("product")</th>
-                            <th>@messages("quantity")</th>
-                            <th>@messages("subTotal")</th>
-                            <th>-----------</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(child <- children) {
-                            <tr>
-                                <td>@child.id</td>
-                                <td>
-                                    @restrictOr(roles = List(Array("productShow"))) {
-                                        <a href="/product_show/@child.productId">@child.productName
-
-                                    </a>
-                                    }{
-                                        @child.productName                                    
-                                    }
-                                </td>
-                                <td><input type="text" name="quantity" value="@child.quantity" style="width: 100px;"></td>
-                                <td>@child.totalPrice</td>
-                                <td>
-                                   @restrict(roles = List(Array("requestRowShow"))) {
-                                       <a href="/requestRow_show/@child.id" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-eye-open"></span></a>
-                                   }
-                                   @restrict(roles = List(Array("requestRowEdit"))) {
-                                       <a href="/requestRow_update/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></a> 
-                                   }
-                                   @restrict(roles = List(Array("requestRowDelete"))) {
-                                       <a href="/requestRow_removeFromCart/@child.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
-                                   }
-                                   @if(child.status != "entregado") {
-                                    <a href="/requestRow_fill/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-send"></span></a>
-                                   }
-                               </td> 
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                      <td>Total</td>
-                      <td></td>
-                      <td>@totalPrice</td>
-                    </tr>
-                  </tfoot>
-                </table>
+        <div class="row">
+            <div class="col-md-2">
+                <div style="display: inline-block;"> @messages("date"): </div>
+                <div style="display: inline-block;" id="date">@productRequest.date</div>
+            </div>
+            <div class="col-md-2">
+                <div style="display: inline-block;"> Employee: </div>
+                <div style="display: inline-block;" id="employeeName">@productRequest.employeeName</div>
+            </div>
+            <div class="col-md-2">
+                <div style="display: inline-block;"> Store: </div>
+                <div style="display: inline-block;" id="storekeeperName">@productRequest.storekeeperName</div>
+            </div>
+            <div class="col-md-2">
+                <div style="display: inline-block;"> @messages("status"): </div>
+                <div style="display: inline-block;" id="status">@productRequest.status</div>
             </div>
         </div>
-        <div class="col-md-6 col-sm-12" style="background: white;">
-            <div class="">
-                @for(category <- categories) {
-                    <div style="display: inline-block;">
-                    @form(routes.CartController.filterByCategoryPost()) {
-                        @inputText(addCartRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
-                        <button type="submit" class="btn btn-primary">@category.name</button>
-                    }
+        <div class="row">
+            <div class="col-md-5">
+                <div class="table table-bordered">
+                    <table class="table table-bordered" id="rows">
+                        <thead>
+                            <tr>
+                                <th>@messages("product")</th>
+                                <th>@messages("quantityShort")</th>
+                                <th>@messages("subTotal")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(child <- children) {
+                                <tr>
+                                    <td>
+                                        @restrictOr(roles = List(Array("productShow"))) {
+                                            <a href="/product_show/@child.productId" style="font-size: 9px;">@child.id : @child.productName</a>
+
+                                        }{
+                                        @child.id : @child.productName
+                                        }
+                                        <img src="http://localhost:8081/assets/images/@(child.id)_product.jpg" style="height: 20px;" alt="">
+                                    </td>
+                                    <td><input type="text" name="quantity" value="@child.quantity" style="width: 70px;"></td>
+                                    <td>@child.totalPrice</td>
+                                    <td>
+                                       @restrict(roles = List(Array("requestRowShow"))) {
+                                           <a href="/requestRow_show/@child.id" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-eye-open"></span></a>
+                                       }
+                                       @restrict(roles = List(Array("requestRowEdit"))) {
+                                           <a href="/requestRow_update/@child.id" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></a>
+                                       }
+                                       @restrict(roles = List(Array("requestRowDelete"))) {
+                                           <a href="/requestRow_removeFromCart/@child.id" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                                       }
+                                   </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                          <td colspan="2">Total</td>
+                          <td colspan="3">@totalPrice</td>
+                        </tr>
+                      </tfoot>
+                    </table>
                 </div>
-                }
             </div>
-            @for(product <- products) {
-                <div style=''>
-                    @form(routes.CartController.addCartPost()) {
-                        <div class="col-md-2 col-sm-3" style='background-image: url("http://localhost:8081/assets/images/@(product._1)_product.jpg"); height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px; background-size: 100px 100px;'>
-                            <span style="width: 20px; font-size: 10px;">@product._2</span>
-                            @inputText(addCartRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
-                            <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+            <div class="col-md-7 col-sm-12" style="background: white;">
+                <div class="">
+                    <div style="display: inline-block;">
+                        @form(routes.CartController.filterByCategoryPost()) {
+                            @inputText(addCartRow("categoryName").copy(value=Option("All")), 'hidden -> "true", '_label -> "")
+                            <button type="submit" class="btn btn-primary">All</button>
+                        }
+                    </div>
+                    @for(category <- categories) {
+                        <div style="display: inline-block;">
+                            @form(routes.CartController.filterByCategoryPost()) {
+                                @inputText(addCartRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
+                                <button type="submit" class="btn btn-primary">@category.name</button>
+                            }
                         </div>
                     }
                 </div>
-            }
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <div style="display: inline-block;"> @messages("date"): </div>
-            <div style="display: inline-block;" id="date">@productRequest.date</div>
-        </div>
-        <div class="col-md-2">
-            <div style="display: inline-block;"> Employee: </div>
-            <div style="display: inline-block;" id="employeeName">@productRequest.employeeName</div>
-        </div>
-        <div class="col-md-2">
-            <div style="display: inline-block;"> Store: </div>
-            <div style="display: inline-block;" id="storekeeperName">@productRequest.storekeeperName</div>
-        </div>
-        <div class="col-md-2">
-            <div style="display: inline-block;"> @messages("status"): </div>
-            <div style="display: inline-block;" id="status">@productRequest.status</div>
+                @for(product <- products) {
+                    <div style=''>
+                        @form(routes.CartController.addCartPost()) {
+                            <div class="col-md-2 col-sm-3" style='background-image: url("http://localhost:8081/assets/images/@(product._1)_product.jpg"); height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px; background-size: 100px 100px;'>
+                                <span style="width: 20px; font-size: 10px;">@product._2</span>
+                                @inputText(addCartRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
+                                <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
         </div>
     </div>
     <style>

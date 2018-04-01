@@ -49,6 +49,7 @@ percent = Porcentage
 vendor = Proveedor
 measure = Medida
 quantity = Cantidad
+quantityShort = Cant
 inStock = En inventario
 vendorName = Proveedor
 

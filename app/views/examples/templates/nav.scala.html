@@ -13,7 +13,7 @@
         images[1] = "/assets/images/t_stock_banner01.png";
         var loop;
         var i = 0;
-
+<t-></t->
         var i = 0;
         function fadeDivs() {
             console.log("fade in");
@@ -34,7 +34,7 @@
   <nav style="padding: 0; border: 0; margin: 0; width: 100%;">
      <ul>
         <li><a href="/profile">@messages("profile")</a></li>
-        <li><a href="/card_show/1">@messages("card")</a></li>
+        <li><a href="/cart_show/1">@messages("card")</a></li>
         @restrict(roles = List(Array("product"))) {
             <li>
                <a id="product" href="/product_list">@messages("products")<span class="caret"></span></a>
