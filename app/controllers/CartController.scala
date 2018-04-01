@@ -21,7 +21,7 @@ import javax.inject._
 import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class CardController @Inject()(repo: ProductRequestRepository, repoProducts: ProductRepository,
+class CartController @Inject()(repo: ProductRequestRepository, repoProducts: ProductRepository,
                                repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
                                repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
                                val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
@@ -35,9 +35,9 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
       "detail" -> text)(CreateProductRequestForm.apply)(CreateProductRequestForm.unapply)
   }
 
-  val addCardForm: Form[AddCardForm] = Form {
+  val addCartForm: Form[AddCartForm] = Form {
     mapping(
-      "id" -> nonEmptyText)(AddCardForm.apply)(AddCardForm.unapply)
+      "id" -> nonEmptyText)(AddCartForm.apply)(AddCartForm.unapply)
   }
 
   val filterByCategoryForm: Form[FilterByCategoryForm] = Form {
@@ -151,7 +151,7 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
 
     repo.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.card_show(new MyDeadboltHandler, res(0), requestRows, addCardForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
+      Ok(views.html.cart_show(new MyDeadboltHandler, res(0), requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
     }
   }
 
@@ -181,7 +181,7 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
     }
   }
 
-  def updateCardItemsPost = Action.async { request =>
+  def updateCartItemsPost = Action.async { request =>
 
     println("testPost Called");
     repoRow.updateQuantity(request.body.asFormUrlEncoded.get("id").head.toLong,
@@ -278,8 +278,8 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
     }
   }
 
-  def getProductList(): Seq[Product] = {
-    Await.result(repoProducts.list().map {
+  def getProductList(): Seq[(Product, Measure)] = {
+    Await.result(repoProducts.listComplex().map {
       case (productList) =>
         productList
     }, 3000.millis)
@@ -310,22 +310,22 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
     }
   }
 
-  def addCardPost = LanguageAction.async { implicit request =>
-    addCardForm.bindFromRequest.fold(
+  def addCartPost = LanguageAction.async { implicit request =>
+    addCartForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Redirect(routes.CardController.show(1)))
+        Future.successful(Redirect(routes.CartController.show(1)))
       },
       res => {
-        // Create the order detail here with res.id and currentCardId with 1 default quantity
-        val selProduct = productList.filter(_.id == res.id.toLong).head
+        // Create the order detail here with res.id and currentCartId with 1 default quantity
+        val selProduct = productList.filter(_._1.id == res.id.toLong).head
         val statusStr = "status"
 
-        repoRow.create(requestObj.id, selProduct.id, selProduct.name,
-          1, selProduct.price, selProduct.price, 0, 0, 0, 0, statusStr,
-          selProduct.measureId, unidades(selProduct.measureId.toString),
+        repoRow.create(requestObj.id, selProduct._1.id, selProduct._1.name,
+          1, selProduct._1.price, selProduct._1.price, 0, 0, 0, 0, statusStr,
+          selProduct._1.measureId, unidades(selProduct._1.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
-          Redirect(routes.CardController.show(requestObj.id))
+          Redirect(routes.CartController.show(requestObj.id))
         }
       })
   }
@@ -333,16 +333,14 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   def filterByCategoryPost = LanguageAction.async { implicit request =>
     filterByCategoryForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Redirect(routes.CardController.show(1)))
+        Future.successful(Redirect(routes.CartController.show(1)))
       },
       res => {
         this.category = res.categoryName
-        Future.successful(Redirect(routes.CardController.show(1)))
+        Future.successful(Redirect(routes.CartController.show(1)))
       })
   }
 
-
-  // update required
   def updatePost = LanguageAction.async { implicit request =>
     updateForm.bindFromRequest.fold(
       errorForm => {
@@ -360,10 +358,6 @@ class CardController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   }
 }
 
-case class AddCardForm(id: String)
+case class AddCartForm(id: String)
 
 case class FilterByCategoryForm(categoryName: String)
-
-//case class CreateProductRequestForm(date: String, employee: Long, storekeeper: Long, status: String, detail: String)
-
-//case class UpdateProductRequestForm(id: Long, date: String, employee: Long, storekeeper: Long, status: String, detail: String)

@@ -38,7 +38,8 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
   }
 
   var measures = getMeasureMap()
-  var products: Seq[Product] = _
+  var productsList: Seq[(Product, Measure)] = _
+  var products_1: Seq[(Product, Measure)] = _
   var vendors: Seq[Vendor] = _
   var vendorsAssigned: Seq[Vendor] = _
   var productId: Long = _
@@ -82,17 +83,26 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
   /** Goes to product product list page */
   def index = LanguageAction.async { implicit request =>
     repo.joinExample()
-    repo.list().map { res =>
-      products = res
-      Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
+    repo.listComplex().map { res =>
+      productsList = res
+      Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, productsList))
+    }
+  }
+
+  /** Goes to product product list page */
+  def index1 = LanguageAction.async { implicit request =>
+    repo.joinExample()
+    repo.listComplex().map { res =>
+      products_1 = res
+      Ok(views.html.product.product_list1(new MyDeadboltHandler, searchForm, products_1))
     }
   }
 
   /** Get the product that are on the minimum quantity to reorder */
   def reorder_index = LanguageAction.async { implicit request =>
-    repo.reorder_list().map { res =>
-      products = res
-      Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
+    repo.reorder_listComplex().map { res =>
+      productsList = res
+      Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, productsList))
     }
   }
 
@@ -100,7 +110,7 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
   def list = LanguageAction { implicit request =>
 
 
-    Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products))
+    Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, productsList))
   }
 
   /** Saves a new product to the database */
@@ -124,8 +134,8 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
   }
 
   /** Return a list of products that match with seach param */
-  def searchProduct(search: String): Seq[Product] = {
-    Await.result(repo.searchProduct(search).map { res =>
+  def searchProduct(search: String): Seq[(Product, Measure)] = {
+    Await.result(repo.searchProductComplex(search).map { res =>
       res
     }, 1000.millis)
   }
@@ -144,18 +154,18 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
     var currentPage = 1
     searchForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products)))
+        Future.successful(Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, productsList)))
       },
       res => {
-        products = searchProduct(res.search)
-        Future(Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, products)))
+        productsList = searchProduct(res.search)
+        Future(Ok(views.html.product.product_list(new MyDeadboltHandler, searchForm, productsList)))
       })
   }
 
-  /** Get the list of products on json format */
+  /** Get the list of products on json format.*/
   def getProducts = LanguageAction.async {
-    repo.list().map { insumos =>
-      Ok(Json.toJson(insumos))
+    repo.list().map { products =>
+      Ok(Json.toJson(products))
     }
   }
 
@@ -338,7 +348,7 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
 
 }
 
-/** class for seach from */
+/** class for search from */
 case class SearchProductForm(search: String)
 
 /** class for create form */

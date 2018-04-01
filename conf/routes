@@ -98,9 +98,9 @@ GET     /vendor_add         			controllers.VendorController.addGet
 
 # Now for insumos or products
 GET     /product_search 				controllers.ProductController.searchProductPost
-GET     /add_card 						controllers.CardController.addCardPost
-POST    /update_cardItems				controllers.CardController.updateCardItemsPost
-POST    /filter_byCategory				controllers.CardController.filterByCategoryPost
+GET     /add_cart 						controllers.CartController.addCartPost
+POST    /update_cartItems				controllers.CartController.updateCartItemsPost
+POST    /filter_byCategory				controllers.CartController.filterByCategoryPost
 GET     /product_show/:id 				controllers.ProductController.show(id: Long)
 GET     /product_remove/:id        		controllers.ProductController.delete(id: Long)
 GET     /products/:id 					controllers.ProductController.getById(id: Long)
@@ -189,8 +189,8 @@ GET     /discountReport_add         			controllers.DiscountReportController.addG
 
 # Now for Product requests
 GET     /productRequest_show/:id 				controllers.ProductRequestController.show(id: Long)
-GET     /card_show/:id 							controllers.CardController.show(id: Long)
-GET     /card_list 								controllers.CardController.index
+GET     /cart_show/:id 							controllers.CartController.show(id: Long)
+GET     /cart_list 								controllers.CartController.index
 GET     /productRequest_update/:id 				controllers.ProductRequestController.getUpdate(id: Long)
 GET     /productRequest_send/:id        		controllers.ProductRequestController.getSend(id: Long)
 GET     /productRequest_finish/:id        		controllers.ProductRequestController.getFinish(id: Long)
@@ -226,7 +226,7 @@ GET     /requestRow_show/:id 				controllers.RequestRowController.show(id: Long)
 GET     /requestRow_update/:id        		controllers.RequestRowController.getUpdate(id: Long)
 GET     /requestRow_fill/:id        		controllers.RequestRowController.getFill(id: Long)
 GET     /requestRow_remove/:id        		controllers.RequestRowController.delete(id: Long)
-GET     /requestRow_removeFromCard/:id 		controllers.RequestRowController.deleteFromCard(id: Long)
+GET     /requestRow_removeFromCart/:id 		controllers.RequestRowController.deleteFromCart(id: Long)
 GET     /requestRows/:id 					controllers.RequestRowController.getById(id: Long)
 POST    /requestRow_update             		controllers.RequestRowController.updatePost
 

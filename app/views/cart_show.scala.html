@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCardRow: Form[AddCardForm], filterByCategoryForm: Form[FilterByCategoryForm], products: Seq[(Long, String)], categories: Seq[Category], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, productRequest: ProductRequest, children: Seq[RequestRow], addCartRow: Form[AddCartForm], filterByCategoryForm: Form[FilterByCategoryForm], products: Seq[(Long, String)], categories: Seq[Category], totalPrice: Double)(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
 
@@ -6,18 +6,22 @@
 
     <div class="container">
 
-        <button type="button" class="btn btn-primary btn-sm">Save Card</button>
-
+        <button type="button" id="saveCart" class="btn btn-primary btn-sm">Save And Close</button>
         <script type="text/javascript">
-            $("button").click(function() {
-                $("#rows tbody tr").each( function(index, rowItem) {
-                    var id = $($(rowItem).find("td")[0]).text();
-                    var quantity = $($($(rowItem).find("td")[2]).find("input")[0]).val();
-                    $.post( "/update_cardItems", { id: id, quantity: quantity}, function( data ) {
-                        console.log(data);
+            $("#saveCart").click(function() {
+                if (confirm('Are you sure you want to save and close the cart')) {
+                    $("#rows tbody tr").each( function(index, rowItem) {
+                        var id = $($(rowItem).find("td")[0]).text();
+                        var quantity = $($($(rowItem).find("td")[2]).find("input")[0]).val();
+                        $.post( "/update_cartItems", { id: id, quantity: quantity}, function( data ) {
+                            console.log(data);
+                        });
                     });
-                });
-            });                             
+                } else {
+
+                }
+
+            });
         </script>
 
         @restrict(roles = List(Array("productRequestList"))) {
@@ -67,7 +71,7 @@
                                        <a href="/requestRow_update/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></a> 
                                    }
                                    @restrict(roles = List(Array("requestRowDelete"))) {
-                                       <a href="/requestRow_removeFromCard/@child.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
+                                       <a href="/requestRow_removeFromCart/@child.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
                                    }
                                    @if(child.status != "entregado") {
                                     <a href="/requestRow_fill/@child.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-send"></span></a>
@@ -90,8 +94,8 @@
             <div class="">
                 @for(category <- categories) {
                     <div style="display: inline-block;">
-                    @form(routes.CardController.filterByCategoryPost()) {
-                        @inputText(addCardRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
+                    @form(routes.CartController.filterByCategoryPost()) {
+                        @inputText(addCartRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
                         <button type="submit" class="btn btn-primary">@category.name</button>
                     }
                 </div>
@@ -99,17 +103,18 @@
             </div>
             @for(product <- products) {
                 <div style=''>
-                    @form(routes.CardController.addCardPost()) {
+                    @form(routes.CartController.addCartPost()) {
                         <div class="col-md-2 col-sm-3" style='background-image: url("http://localhost:8081/assets/images/@(product._1)_product.jpg"); height: 80px; display: inline-block; border-style: solid; border-width: 2px 2px 2px 2px; background-size: 100px 100px;'>
                             <span style="width: 20px; font-size: 10px;">@product._2</span>
-                            @inputText(addCardRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
+                            @inputText(addCartRow("id").copy(value=Option(product._1.toString())), 'hidden -> "true", '_label -> "")
                             <button type="submit" class="btn btn-primary btn-xs" style="position: relative; top: -26px; left: 16px;"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                         </div>
                     }
                 </div>
             }
         </div>
-    </div class="row">
+    </div>
+    <div class="row">
         <div class="col-md-2">
             <div style="display: inline-block;"> @messages("date"): </div>
             <div style="display: inline-block;" id="date">@productRequest.date</div>
@@ -127,13 +132,6 @@
             <div style="display: inline-block;" id="status">@productRequest.status</div>
         </div>
     </div>
-    <div>
-        @restrict(roles = List(Array("requestRowCreate"))) {
-            <div style="display: inline-block;"> <a id="addDetail" href="/requestRow_add/@productRequest.id" class="btn btn-primary btn-sm">@messages("addDetail")</a> </div>
-        }
-    </div>
-
-    <div>Lista Detail of Order</div>
     <style>
         #categoryName_field {
             width: 0;

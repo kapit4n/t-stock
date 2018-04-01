@@ -7,7 +7,7 @@
     <div>1
     @examples.templates.nav(handler)
         @restrict(roles = List(Array("productCreate"))) {
-                                <a href="/product_add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></a> 
+        <a href="/product_add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span></a>
         }
         @restrict(roles = List(Array("productList"))) {
             <a href="/product_list" class="btn btn-primary btn-sm">@messages("toListCero")</a>
@@ -21,7 +21,7 @@
         @b3.form(routes.ProductController.searchProductPost()) {
             @b3.text(rowSearch("search"), '_label -> "search")
             <button type="submit" class="btn btn-primary">
-                <span class="glyphicon glyphicon-search">
+                <span class="glyphicon glyphicon-search"></span>
             </button>
         }
     </div>
@@ -55,15 +55,15 @@
                         <td>@row._1.cost</td>
                         <td>@row._1.percent</td>
                         <td>@row._1.price</td>
-                        <td>@row._1.measureName</td>
+                        <td>@row._2.name</td>
                         <td>@row._1.stockLimit</td>
                         <td>@row._1.currentAmount</td>
                         <td>
                             @restrict(roles = List(Array("productEdit"))) {
-                                <a href="/product_update/@row._1.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></a>
+                            <a href="/product_update/@row._1.id" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></a>
                             }
                             @restrict(roles = List(Array("productDelete"))) {
-                                <a href="/product_remove/@row._1.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></a>
+                            <a href="/product_remove/@row._1.id" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span></a>
                             }
                         </td>
                     </tr>

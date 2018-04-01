@@ -108,15 +108,6 @@ class ProductRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
   }
 
   /**
-    * Return a list of products
-    *
-    * @return Future[Seq[Product]]
-    **/
-  def list(): Future[Seq[Product]] = db.run {
-    productsTable.result
-  }
-
-  /**
     * Example of join of two tables
     *
     * @return
@@ -131,12 +122,55 @@ class ProductRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
   }
 
   /**
+    * Format get of products
+    *
+    * @return
+    */
+  def listComplex(): Future[Seq[(Product, Measure)]]  = db.run {
+    val implicitCrossJoin = for {
+      p <- productsTable
+      m <- measuresTable  if p.measureId === m.id
+    } yield (p, m)
+
+    implicitCrossJoin.result
+  }
+
+  /**
+    * Format get of products
+    *
+    * @return
+    */
+  def list(): Future[Seq[Product]]  = db.run {
+    val implicitCrossJoin = for {
+      p <- productsTable
+    } yield (p)
+
+    implicitCrossJoin.result
+  }
+
+  /**
     * Get list of products that are passed the limit of request products
     *
     * @return
     */
   def reorder_list(): Future[Seq[Product]] = db.run {
-    productsTable.filter(x => x.stockLimit > x.currentAmount).result
+    val implicitCrossJoin = for {
+      p <- productsTable.filter(x => x.stockLimit > x.currentAmount)
+    } yield (p)
+    implicitCrossJoin.result
+  }
+
+  /**
+    * Get list of products that are passed the limit of request products
+    *
+    * @return
+    */
+  def reorder_listComplex(): Future[Seq[(Product, Measure)]] = db.run {
+    val implicitCrossJoin = for {
+      p <- productsTable.filter(x => x.stockLimit > x.currentAmount)
+      m <- measuresTable  if p.measureId === m.id
+    } yield (p, m)
+    implicitCrossJoin.result
   }
 
   /**
@@ -302,11 +336,30 @@ class ProductRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
     * @param searchCriteria
     * @return Future[Seq[Product]], returns the list of products that match the criteria
     **/
-  def searchProduct(searchCriteria: String): Future[Seq[Product]] = db.run {
-    if (!searchCriteria.isEmpty) {
+  def searchProductComplex(searchCriteria: String): Future[Seq[(Product, Measure)]] = db.run {
+    val implicitCrossJoin = for {
+      p <- productsTable.filter(p => (p.name like "%" + searchCriteria + "%")).drop(0).take(100)
+      m <- measuresTable  if p.measureId === m.id
+    } yield (p, m)
+    implicitCrossJoin.result
+    /*if (!searchCriteria.isEmpty) {
       productsTable.filter(p => (p.name like "%" + searchCriteria + "%")).drop(0).take(100).result
     } else {
       productsTable.drop(0).take(100).result
-    }
+    }*/
   }
+
+  /**
+    * Searches products by param
+    *
+    * @param searchCriteria
+    * @return Future[Seq[Product]], returns the list of products that match the criteria
+    **/
+  def searchProduct(searchCriteria: String): Future[Seq[Product]] = db.run {
+    val implicitCrossJoin = for {
+      p <- productsTable.filter(p => (p.name like "%" + searchCriteria + "%")).drop(0).take(100)
+    } yield (p)
+    implicitCrossJoin.result
+  }
+
 }

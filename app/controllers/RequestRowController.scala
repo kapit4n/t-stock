@@ -34,7 +34,7 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
 
   var productRequestsMap: Map[String, String] = _
   var products: Map[String, String] = _
-  var unidades: Map[String, String] = _
+  var units: Map[String, String] = _
   var updatedRow: RequestRow = _
   var productRequestId: Long = 0
   var requestIdParm: Long = 0
@@ -61,17 +61,17 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
   }
 
   def addGet(requestId: Long) = LanguageAction { implicit request =>
-    unidades = getMeasuresMap()
+    units = getMeasuresMap()
     productRequestsMap = getProductRequestsMap(requestId)
     products = getProductsMap()
     requestIdParm = requestId
-    Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, unidades))
+    Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, units))
   }
 
   def add = LanguageAction.async { implicit request =>
     newForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, errorForm, productRequestsMap, products, unidades)))
+        Future.successful(Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, errorForm, productRequestsMap, products, units)))
       },
       res => {
         var product1 = getProductById(res.productId)
@@ -82,7 +82,7 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
         val totalPrice = res.quantity * newPrice
         repo.create(res.requestId, res.productId, products(res.productId.toString()),
           res.quantity, newPrice, totalPrice, 0, 0, 0, 0, res.status,
-          product1.measureId, unidades(product1.measureId.toString),
+          product1.measureId, units(product1.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { resNew =>
           Redirect(routes.RequestRowController.show(resNew.id))
@@ -143,12 +143,12 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
           "price" -> res.toList(0).price.toString(),
           "status" -> res.toList(0).status.toString(),
           "measureId" -> res.toList(0).measureId.toString())
-        unidades = getMeasuresMap()
+        units = getMeasuresMap()
         productRequestsMap = getProductRequestsMap(res(0).requestId)
         println(productRequestsMap)
         products = getProductsMap()
         updatedRow = res(0)
-        Ok(views.html.order.requestRow_update(new MyDeadboltHandler, updatedRow, updateForm.bind(anyData), productRequestsMap, products, unidades))
+        Ok(views.html.order.requestRow_update(new MyDeadboltHandler, updatedRow, updateForm.bind(anyData), productRequestsMap, products, units))
     }
   }
 
@@ -245,12 +245,12 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
     }
   }
 
-  def deleteFromCard(id: Long) = LanguageAction.async {
+  def deleteFromCart(id: Long) = LanguageAction.async {
     repo.deleteAndReturnId(id).map { res =>
       if (res == 0) {
-        Redirect(routes.CardController.index)
+        Redirect(routes.CartController.index)
       } else {
-        Redirect(routes.CardController.show(res))
+        Redirect(routes.CartController.show(res))
       }
     }
   }
@@ -268,7 +268,7 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
       errorForm => {
         println("Some error is by there")
         println(errorForm)
-        Future.successful(Ok(views.html.order.requestRow_update(new MyDeadboltHandler, updatedRow, errorForm, productRequestsMap, products, unidades)))
+        Future.successful(Ok(views.html.order.requestRow_update(new MyDeadboltHandler, updatedRow, errorForm, productRequestsMap, products, units)))
       },
       res => {
         var new_price = res.price
@@ -298,7 +298,7 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
   def searchProductPost = LanguageAction.async { implicit request =>
     searchProductForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, unidades)))
+        Future.successful(Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, units)))
       },
       res => {
         repoProduct.searchProduct(res.search).map { resProducts =>
@@ -307,7 +307,7 @@ class RequestRowController @Inject()(repo: RequestRowRepository, repoRowCustomer
             cache put(product.id.toString(), product.name.toString)
           }
           products = cache.toMap
-          Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, unidades))
+          Ok(views.html.order.requestRow_add(new MyDeadboltHandler, requestIdParm, searchProductForm, newForm, productRequestsMap, products, units))
         }
       })
   }
