@@ -10,10 +10,10 @@
                                 <a href="/product_add" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></a> 
         }
         @restrict(roles = List(Array("productList"))) {
-            <a href="/product_list" class="btn btn-primary btn-sm">@messages("toListCero")</a>
+            <a href="/product_list" class="btn btn-primary btn-sm">@messages("listAll")</a>
         }
         @restrict(roles = List(Array("productCreate"))) {
-                                <a href="/product_reorder_list" class="btn btn-primary btn-sm">@messages("listReorder")</a> 
+                                <a href="/product_reorder_list" class="btn btn-primary btn-sm">@messages("reorderList")</a>
         }
     </div>
 

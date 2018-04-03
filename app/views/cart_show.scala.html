@@ -67,11 +67,10 @@
                                     <td>
                                         @restrictOr(roles = List(Array("productShow"))) {
                                             <a href="/product_show/@child.productId" style="font-size: 9px;">@child.id : @child.productName</a>
-
                                         }{
                                         @child.id : @child.productName
                                         }
-                                        <img src="http://localhost:8081/assets/images/@(child.id)_product.jpg" style="height: 20px;" alt="">
+                                        <img src="http://localhost:8081/assets/images/@(child.productId)_product.jpg" style="height: 20px;" alt="">
                                     </td>
                                     <td><input type="text" name="quantity" value="@child.quantity" style="width: 70px;"></td>
                                     <td>@child.totalPrice</td>

@@ -1,0 +1,28 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, row: Category, rowForm: Form[UpdateCategoryForm])(implicit messages: Messages, request: Request[Any])
+@import be.objectify.deadbolt.scala.views.html._
+@import helper._
+
+@main("Update Category") {
+    @examples.templates.nav(handler)
+    <div>
+        @restrict(roles = List(Array("categoryList"))) {
+            <a href="/category_list/1" class="btn btn-primary btn-sm">@messages("toList")</a>
+        }
+        @restrict(roles = List(Array("categoryShow"))) {
+            <a href="/category_show/@row.name" class="btn btn-info btn-sm">@messages("view")</a>
+        }
+        @restrict(roles = List(Array("categoryDelete"))) {
+           <a href="/category_remove/@row.name" class="btn btn-danger btn-sm">@messages("remove")</a>
+        }
+    </div>
+
+    @form(routes.CategoryController.updatePost()) {
+    <div class="container">
+            @inputText(rowForm("name"))
+            @inputText(rowForm("description"))
+        <input type="submit" value=@messages("update")  class="btn btn-primary btn-sm"/>
+        <a href="/category_show/@row.name" class="btn btn-primary btn-sm">@messages("cancel")</a>
+        @inputText(rowForm("id"), 'hidden -> "true", '_label -> "")
+    </div>
+    }
+}

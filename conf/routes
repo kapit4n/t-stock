@@ -22,7 +22,7 @@ POST    /account_search		 					controllers.AccountController.searchAccountPost
 GET     /customer_show/:id 				controllers.CustomerController.show(id: Long)
 GET     /customer_update/:id        	controllers.CustomerController.getUpdate(id: Long)
 GET     /customer_remove/:id        	controllers.CustomerController.delete(id: Long)
-GET     /customeres/:id 				controllers.CustomerController.getById(id: Long)
+GET     /customers/:id 				controllers.CustomerController.getById(id: Long)
 POST    /customer_update             	controllers.CustomerController.updatePost
 
 POST    /customer                 		controllers.CustomerController.add
@@ -32,6 +32,17 @@ GET     /customer_list/:page   			controllers.CustomerController.index(page: Int
 GET     /company_list   				controllers.CustomerController.index_company
 GET     /company_show/:id  				controllers.CustomerController.showCompany(id: Long)
 GET     /customer_add   				controllers.CustomerController.addGet
+
+# Categories routes
+GET     /category_show/:name 			controllers.CategoryController.show(name: String)
+GET     /category_update/:name        	controllers.CategoryController.getUpdate(name: String)
+GET     /category_remove/:name        	controllers.CategoryController.delete(name: String)
+GET     /categorys/:name 				controllers.CategoryController.getByName(name: String)
+POST    /category_update             controllers.CategoryController.updatePost
+
+POST    /category                 	controllers.CategoryController.add
+GET     /category_list         		controllers.CategoryController.index
+GET     /category_add         		controllers.CategoryController.addGet
 
 # accounts routes
 GET     /accountChildren/:id 		controllers.AccountController.accountChildren(id: Long)

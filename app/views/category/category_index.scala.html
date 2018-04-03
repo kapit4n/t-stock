@@ -1,0 +1,50 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, categorys: Seq[Category])(implicit messages: Messages, request: Request[Any])
+@import be.objectify.deadbolt.scala.views.html._
+@import helper._
+
+@main("Lista") {
+    @examples.templates.nav(handler)
+    <div class="container">
+        @restrict(roles = List(Array("categoryCreate"))) {
+            <a href="/category_add" class="btn btn-primary btn-sm">@messages("new")</a>
+        }
+        @restrict(roles = List(Array("categoryList"))) {
+            <a href="/category_list/1" class="btn btn-primary btn-sm">@messages("toList")</a>
+        }
+    </div>
+
+    <div class="table table-bordered">
+        <table class="table table-bordered conted" id="rows">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>@messages("name")</th>
+                    <th>@messages("description")</th>
+                    <th>---</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(category <- categorys) {
+                <tr>
+                    <td></td>
+                    <td>@category.name</td>
+                    <td>@category.description</td>
+                    <td>
+                        @restrict(roles = List(Array("productEdit"))) {
+                            <a href="/category_update/@category.name" class="btn btn-primary btn-sm">@messages("edit")</a>
+                        }
+                        @restrict(roles = List(Array("productDelete"))) {
+                            <a href="/category_remove/@category.name" class="btn btn-danger btn-sm">@messages("remove")</a>
+                        }
+                        @restrict(roles = List(Array("productShow"))) {
+                            <a href="/category_show/@category.name" class="btn btn-info btn-sm">@messages("view")</a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <style type="text/css">
+        </style>
+    </div>
+}

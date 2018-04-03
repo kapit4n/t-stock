@@ -9,7 +9,7 @@
             <a id="goRequest" href="/productRequest_show/@row.requestId" class="btn btn-info btn-sm">@messages("order")</a>
         }
         @restrict(roles = List(Array("productRequestShow"))) {
-            <a id="goRequest" href="/card_show/@row.requestId" class="btn btn-info btn-sm">@messages("card")</a>
+            <a id="goRequest" href="/cart_show/@row.requestId" class="btn btn-info btn-sm">@messages("cart")</a>
         }
         @restrict(roles = List(Array("requestRowEdit"))) {
             <a href="/requestRow_update/@row.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
