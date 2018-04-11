@@ -140,6 +140,10 @@ GET     /productTransforms         				controllers.ProductTransformController.ge
 GET     /productTransform_list         			controllers.ProductTransformController.index
 GET     /productTransform_add/:id         		controllers.ProductTransformController.addGet(id: Long)
 
+# Cashier endpoints
+GET     /cashier/product_list         			controllers.ProductController.cashier_index
+GET     /cashier/productRequest_list         	controllers.ProductRequestController.cashier_index
+GET     /cashier/customer_list/:page         			controllers.CustomerController.cashier_index(page: Int)
 
 # Now for product Invs
 GET     /productInv_show/:id 				controllers.ProductInvController.show(id: Long)
@@ -215,7 +219,6 @@ GET     /productRequestsByEmployee/:id        		controllers.ProductRequestContro
 GET     /productRequestsByStorekeeper/:id        	controllers.ProductRequestController.getProductRequestsByStorekeeper(id: Long)
 GET     /productRequest_list         				controllers.ProductRequestController.index
 GET     /productRequest_add     					controllers.ProductRequestController.addGet
-
 
 # Now for Product requests
 GET     /productRequestByInsumo_show/:id 					controllers.ProductRequestByInsumoController.show(id: Long)

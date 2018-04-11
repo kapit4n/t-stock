@@ -1,0 +1,46 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, children: Seq[ProductRequest])(implicit messages: Messages, request: Request[Any])
+@import be.objectify.deadbolt.scala.views.html._
+@import helper._
+
+@main("Orders") {
+    @navs.nav_cashier(handler)
+    <div class="container">@messages("ordersList")</div>
+    <div class="table table-bordered">
+        <table class="table table-bordered" id="rows">
+            <thead>
+                <tr>
+                    <th>@messages("date")</th>
+                    <th>@messages("employee")</th>
+                    <th>@messages("store")</th>
+                    <th>@messages("status")</th>
+                    <th>@messages("detail")</th>
+                    <th>-----------</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(row <- children) {
+                    <tr>
+                        <td>@row.date</td>
+                        <td>
+                            @row.employeeName                                    
+                        </td>
+                        <td>
+                           @row.storekeeperName                                    
+                        </td>
+
+                        <td>@row.status</td>
+                        <td>@row.detail</td>
+                        <td>
+                            @restrict(roles = List(Array("productRequestShow"))) {
+                                <a href="/productRequest_show/@row.id" class="btn btn-info btn-sm">@messages("view")</a>
+                            }
+                            @restrict(roles = List(Array("productRequestShow"))) {
+                                <a href="/card_show/@row.id" class="btn btn-info btn-sm">@messages("card")</a>
+                            }
+                        </td> 
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -74,6 +74,19 @@ class CustomerController @Inject()(
     }
   }
 
+  def cashier_index(start: Int) = LanguageAction.async { implicit request =>
+    if (start == 0) {
+      Future(Ok(views.html.customer.cashier.customer_index(new MyDeadboltHandler, newForm, searchForm, customers, total, currentPage, interval)))
+    } else {
+      repo.list((start - 1) * interval, interval).map { res =>
+        customers = res
+        total = getTotal()
+        currentPage = start
+        Ok(views.html.customer.cashier.customer_index(new MyDeadboltHandler, newForm, searchForm, customers, total, currentPage, interval))
+      }
+    }
+  }
+
   var companys: Seq[Company] = _
 
   def index_company() = LanguageAction.async { implicit request =>

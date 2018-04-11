@@ -1,74 +1,17 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler)(implicit messages: Messages, request: Request[Any])
 @import be.objectify.deadbolt.scala.views.html._
 @import helper._
-  <nav style="padding: 0; border: 0; margin: 0; width: 100%;">
-     <ul>
-        <li><a href="/profile">@messages("profile")</a></li>
-        <li><a href="/card_show/1">@messages("card")</a></li>
-        @restrict(roles = List(Array("product"))) {
-            <li>
-               <a id="product" href="/product_list">@messages("products")<span class="caret"></span></a>
-               <div>
-                  <ul>
-                     <li><a id="product_list" href="/product_list">@messages("list")</a></li>
-                     @restrict(roles = List(Array("productCreate"))) {
-                      <li><a id="product_add" href="/product_add">@messages("new")</a></li>
-                     }
-                  </ul>
-               </div>
-            </li>
-        }
-        @restrict(roles = List(Array("customer"))) {
-            <li>
-               <a id="customer" href="/customer_list/1">@messages("customers")<span class="caret"></span></a>
-               <div>
-                  <ul>
-                     <li><a id="customer_list" href="/customer_list/1">@messages("list")</a></li>
-                     @restrict(roles = List(Array("customerCreate"))) {
-                      <li><a id="customer_add" href="/customer_add">@messages("new")</a></li>
-                     }
-                  </ul>
-               </div>
-            </li>
-        }
-        @restrict(roles = List(Array("productRequest"))) {
-            <li>
-               <a id="product_request" href="/productRequest_list">@messages("orders")<span class="caret"></span></a>
-               <div>
-                  <ul>
-                     <li><a id="product_request_list" href="/productRequest_list">@messages("list")</a></li>
-                     @restrict(roles = List(Array("productRequestCreate"))) {
-                      <li><a id="product_request_add" href="/productRequest_add">@messages("new")</a></li>
-                     }
-                  </ul>
-               </div>
-            </li>
-        }
 
-        @restrict(roles = List(Array("transaction"))) {
-            <li>
-               <a id="transaction" href="/transaction_list">@messages("transactions")<span class="caret"></span></a>
-               <div>
-                  <ul>
-                     <li><a id="transaction_list" href="/transaction_list">@messages("list")</a></li>
-
-                     @restrict(roles = List(Array("transaction"))) {
-                      <li><a id="transaction_banking" href="/transaction_list">@messages("banking")</a></li>
-                     }
-                     @restrict(roles = List(Array("transaction"))) {
-                      <li><a id="transaction_sales" href="/transaction_list">@messages("sales")</a></li>
-                     }
-                     @restrict(roles = List(Array("transaction"))) {
-                      <li><a id="transaction_expenses" href="/transaction_list">@messages("expenses")</a></li>
-                     }
-                     @restrict(roles = List(Array("transaction"))) {
-                      <li><a id="transaction_registers" href="/transaction_list">@messages("registers")</a></li>
-                     }
-                  </ul>
-               </div>
-            </li>
-        }
-     </ul>
-  </nav>
-
-  <a href="/logout">@messages("singOut")</a> <br>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/cashier/productRequest_list">@messages("sells")</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="/card_show/1">@messages("card")</a></li>
+      <li><a id="customer_list" href="/cashier/customer_list/1">@messages("customers")</a></li>
+      <li><a id="product_list" href="/cashier/product_list">@messages("products")</a></li>
+    </ul>
+  </div>
+</nav>
+<a href="/logout">@messages("singOut")</a> <br>

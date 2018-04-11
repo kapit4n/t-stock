@@ -42,6 +42,12 @@ class ProductRequestController @Inject()(repo: ProductRequestRepository, repoRow
     }
   }
 
+  def cashier_index = LanguageAction.async { implicit request =>
+    repo.list().map { res =>
+      Ok(views.html.order.cashier.productRequest_index(new MyDeadboltHandler, res))
+    }
+  }
+
   def addGet = LanguageAction { implicit request =>
     if (request.session.get("role").getOrElse("0").toLowerCase == "employee") {
       employeesNames = getEmployeeNamesMap(request.session.get("userId").getOrElse("0").toLong)

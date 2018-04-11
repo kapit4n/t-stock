@@ -90,6 +90,15 @@ class ProductController @Inject()(repo: ProductRepository, repoVendor: VendorRep
   }
 
   /** Goes to product product list page */
+  def cashier_index = LanguageAction.async { implicit request =>
+    repo.joinExample()
+    repo.listComplex().map { res =>
+      productsList = res
+      Ok(views.html.product.cashier.product_list(new MyDeadboltHandler, searchForm, productsList))
+    }
+  }
+
+  /** Goes to product product list page */
   def index1 = LanguageAction.async { implicit request =>
     repo.joinExample()
     repo.listComplex().map { res =>
