@@ -155,6 +155,23 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
     }
   }
 
+  def showCurrent() = LanguageAction.async { implicit request =>
+    productList = getProductList()// Get current card here
+    if (productList.length > 0) {
+      val requestRows = getChildren(productList(productList.length - 1)._1.id)
+      unidades = getMeasuresMap()
+      productTuples = getProductTuples()
+      val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
+      repo.getById(productList(productList.length - 1)._1.id).map { res =>
+        requestObj = res(0)
+        Ok(views.html.cart_show(new MyDeadboltHandler, res(0), requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
+      }
+    } else {
+      Future.successful(Ok("There is no data to show"))
+    }
+
+  }
+
   var updatedId: Long = 0
 
   // update required

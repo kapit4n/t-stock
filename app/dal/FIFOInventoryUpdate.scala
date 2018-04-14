@@ -1,0 +1,5 @@
+package dal
+
+class FIFOInventoryUpdate {
+
+}
