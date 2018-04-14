@@ -21,13 +21,13 @@
         </script>
 
         @restrict(roles = List(Array("productRequestList"))) {
-            <a href="/productRequest_list" class="btn btn-primary btn-sm">@messages("toList")</a>
+            <a href="/productRequest_list" class="btn btn-sm">@messages("toList")</a>
         }
         @restrict(roles = List(Array("productRequestEdit"))) {
-            <a href="/productRequest_update/@productRequest.id" class="btn btn-primary btn-sm">@messages("edit")</a> 
+            <a href="/productRequest_update/@productRequest.id" class="btn btn-sm">@messages("edit")</a>
         }
         @restrict(roles = List(Array("productRequestDelete"))) {
-           <a href="/productRequest_remove/@productRequest.id" class="btn btn-danger btn-sm">@messages("remove")</a>
+           <a href="/productRequest_remove/@productRequest.id" class="btn btn-sm">@messages("remove")</a>
         }
     </div>
     <div class="container">
@@ -75,14 +75,8 @@
                                     <td><input type="text" name="quantity" value="@child.quantity" style="width: 70px;"></td>
                                     <td>@child.totalPrice</td>
                                     <td>
-                                       @restrict(roles = List(Array("requestRowShow"))) {
-                                           <a href="/requestRow_show/@child.id" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-eye-open"></span></a>
-                                       }
-                                       @restrict(roles = List(Array("requestRowEdit"))) {
-                                           <a href="/requestRow_update/@child.id" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-pencil"></span></a>
-                                       }
                                        @restrict(roles = List(Array("requestRowDelete"))) {
-                                           <a href="/requestRow_removeFromCart/@child.id" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
+                                           <a href="/requestRow_removeFromCart/@child.id" class="btn btn-xs"><span class="glyphicon glyphicon-remove"></span></a>
                                        }
                                    </td>
                                 </tr>
@@ -102,14 +96,14 @@
                     <div style="display: inline-block;">
                         @form(routes.CartController.filterByCategoryPost()) {
                             @inputText(addCartRow("categoryName").copy(value=Option("All")), 'hidden -> "true", '_label -> "")
-                            <button type="submit" class="btn btn-primary">All</button>
+                            <button type="submit" class="btn" style="width: 100px;">All</button>
                         }
                     </div>
                     @for(category <- categories) {
                         <div style="display: inline-block;">
                             @form(routes.CartController.filterByCategoryPost()) {
                                 @inputText(addCartRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
-                                <button type="submit" class="btn btn-primary">@category.name</button>
+                                <button type="submit" class="btn" style="width: 120px;">@category.name</button>
                             }
                         </div>
                     }
