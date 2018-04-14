@@ -95,14 +95,14 @@
                 <div class="">
                     <div style="display: inline-block;">
                         @form(routes.CartController.filterByCategoryPost()) {
-                            @inputText(addCartRow("categoryName").copy(value=Option("All")), 'hidden -> "true", '_label -> "")
+                            @inputText(filterByCategoryForm("categoryName").copy(value=Option("All")), 'hidden -> "true", '_label -> "")
                             <button type="submit" class="btn" style="width: 100px;">All</button>
                         }
                     </div>
                     @for(category <- categories) {
                         <div style="display: inline-block;">
                             @form(routes.CartController.filterByCategoryPost()) {
-                                @inputText(addCartRow("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
+                                @inputText(filterByCategoryForm("categoryName").copy(value=Option(category.name.toString())), 'hidden -> "true", '_label -> "")
                                 <button type="submit" class="btn" style="width: 120px;">@category.name</button>
                             }
                         </div>

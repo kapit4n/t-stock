@@ -1,27 +1,19 @@
 package controllers
 
 import scala.concurrent.duration._
-import play.api._
 import play.api.mvc._
 import play.api.i18n._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.Constraints._
 import play.api.libs.json.Json
 import models._
 import dal._
 import scala.concurrent.{ExecutionContext, Future, Await}
-import scala.collection.mutable.ListBuffer
-import java.util.LinkedHashMap
-import collection.mutable
-import scala.collection.mutable.ArrayBuffer
-import java.util.Calendar
 
 import javax.inject._
-import be.objectify.deadbolt.scala.DeadboltActions
 import security.MyDeadboltHandler
 
-class CartController @Inject()(repo: ProductRequestRepository, repoProducts: ProductRepository,
+class CartController @Inject()(repoProductReq: ProductRequestRepository, repoProducts: ProductRepository,
                                repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
                                repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
                                val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
@@ -50,8 +42,8 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   var productTuples = getProductTuples()
   var productList = getProductList()
   var categoryList = getCategoryList()
-  var requestObj = ProductRequest(0, "", 0, "", 0, "", "", "", "", 0, "")
-  var unidades: Map[String, String] = _
+  var requestObj: ProductRequest = _
+  var units: Map[String, String] = _
   var category = ""
 
   def getMeasuresMap(): Map[String, String] = {
@@ -68,7 +60,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
 
 
   def index = LanguageAction.async { implicit request =>
-    repo.list().map { res =>
+    repoProductReq.list().map { res =>
       Ok(views.html.order.productRequest_index(new MyDeadboltHandler, res))
     }
   }
@@ -89,7 +81,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
         Future.successful(Ok(views.html.order.productRequest_add(new MyDeadboltHandler, errorForm, employeesNames, storeNames)))
       },
       res => {
-        repo.create(
+        repoProductReq.create(
           res.date, res.employee, employeesNames(res.employee.toString),
           res.storekeeper, storeNames(res.storekeeper.toString),
           res.status, res.detail, "veterinaria",
@@ -101,25 +93,25 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   }
 
   def getProductRequestsByEmployee(id: Long) = LanguageAction.async {
-    repo.listByEmployee(id).map { res =>
+    repoProductReq.listByEmployee(id).map { res =>
       Ok(Json.toJson(res))
     }
   }
 
   def getProductRequestsByStorekeeper(id: Long) = LanguageAction.async {
-    repo.listByStorekeeper(id).map { res =>
+    repoProductReq.listByStorekeeper(id).map { res =>
       Ok(Json.toJson(res))
     }
   }
 
   def getProductRequestsByInsumoUser(id: Long) = LanguageAction.async {
-    repo.listByInsumoUser(id).map { res =>
+    repoProductReq.listByInsumoUser(id).map { res =>
       Ok(Json.toJson(res))
     }
   }
 
   def getProductRequests = LanguageAction.async {
-    repo.list().map { res =>
+    repoProductReq.list().map { res =>
       Ok(Json.toJson(res))
     }
   }
@@ -145,26 +137,32 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   def show(id: Long) = LanguageAction.async { implicit request =>
     productList = getProductList()
     val requestRows = getChildren(id)
-    unidades = getMeasuresMap()
+    units = getMeasuresMap()
     productTuples = getProductTuples()
-    val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
+    var totalPrice: Double = 0.0
+    if (requestRows.length > 0) {
+      totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
+    }
 
-    repo.getById(id).map { res =>
+    repoProductReq.getById(id).map { res =>
       requestObj = res(0)
-      Ok(views.html.cart_show(new MyDeadboltHandler, res(0), requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
+      Ok(views.html.cart_show(new MyDeadboltHandler, requestObj, requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
     }
   }
 
   def showCurrent() = LanguageAction.async { implicit request =>
     productList = getProductList()// Get current card here
+    units = getMeasuresMap()
+    productTuples = getProductTuples()
     if (productList.length > 0) {
-      val requestRows = getChildren(productList(productList.length - 1)._1.id)
-      unidades = getMeasuresMap()
-      productTuples = getProductTuples()
-      val totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
-      repo.getById(productList(productList.length - 1)._1.id).map { res =>
+      repoProductReq.list().map { res =>
         requestObj = res(0)
-        Ok(views.html.cart_show(new MyDeadboltHandler, res(0), requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
+        val requestRows = getChildren(requestObj.id)
+        var totalPrice: Double = 0.0
+        if (requestRows.length > 0) {
+          totalPrice = requestRows.map(x => x.totalPrice).reduceLeft((x, y) => x + y)
+        }
+        Ok(views.html.cart_show(new MyDeadboltHandler, requestObj, requestRows, addCartForm, filterByCategoryForm, productTuples, categoryList, totalPrice))
       }
     } else {
       Future.successful(Ok("There is no data to show"))
@@ -177,7 +175,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   // update required
   def getUpdate(id: Long) = LanguageAction.async { implicit request =>
     updatedId = id;
-    repo.getById(id).map {
+    repoProductReq.getById(id).map {
       case (res) =>
         val anyData = Map("id" -> id.toString().toString(), "date" -> res.toList(0).date.toString(), "employee" -> res.toList(0).employee.toString(), "storekeeper" -> res.toList(0).storekeeper.toString(), "status" -> res.toList(0).status.toString(), "detail" -> res.toList(0).detail.toString())
         if (request.session.get("role").getOrElse("0").toLowerCase == "employee") {
@@ -192,7 +190,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
 
   // update required
   def getSend(id: Long) = LanguageAction.async { implicit request =>
-    repo.sendById(id).map {
+    repoProductReq.sendById(id).map {
       case (res) =>
         Redirect(routes.ProductRequestController.index())
     }
@@ -209,7 +207,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
 
   // update required
   def getFinish(id: Long) = LanguageAction.async { implicit request =>
-    repo.finishById(id).map {
+    repoProductReq.finishById(id).map {
       case (res) =>
         Redirect(routes.ProductRequestController.index())
     }
@@ -264,7 +262,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
   }
 
   def getProductTuples(): Seq[(Long, String)] = {
-    if (this.category == "All") {
+    if (this.category == "All" || this.category == "") {
       Await.result(repoProducts.list().map {
         case (productList) =>
           productList.map {
@@ -315,14 +313,14 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
     requestRows.foreach { req =>
       repoRow.delete(req.id)
     }
-    repo.delete(id).map { res =>
+    repoProductReq.delete(id).map { res =>
       Redirect(routes.ProductRequestController.index)
     }
   }
 
   // to copy
   def getById(id: Long) = LanguageAction.async {
-    repo.getById(id).map { res =>
+    repoProductReq.getById(id).map { res =>
       Ok(Json.toJson(res))
     }
   }
@@ -339,7 +337,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
 
         repoRow.create(requestObj.id, selProduct._1.id, selProduct._1.name,
           1, selProduct._1.price, selProduct._1.price, 0, 0, 0, 0, statusStr,
-          selProduct._1.measureId, unidades(selProduct._1.measureId.toString),
+          selProduct._1.measureId, units(selProduct._1.measureId.toString),
           request.session.get("userId").get.toLong,
           request.session.get("userName").get.toString).map { _ =>
           Redirect(routes.CartController.show(requestObj.id))
@@ -364,7 +362,7 @@ class CartController @Inject()(repo: ProductRequestRepository, repoProducts: Pro
         Future.successful(Ok(views.html.order.productRequest_update(new MyDeadboltHandler, updatedId, errorForm, Map[String, String](), Map[String, String]())))
       },
       res => {
-        repo.update(
+        repoProductReq.update(
           res.id, res.date, res.employee, employeesNames(res.employee.toString),
           res.storekeeper, storeNames(res.storekeeper.toString), res.status, res.detail, "insumo",
           request.session.get("userId").get.toLong,
