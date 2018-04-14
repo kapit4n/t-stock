@@ -183,7 +183,7 @@ class ProductInvController @Inject()(repo: ProductInvRepository, repoProduct: Pr
           res.productId, productMap(res.productId.toString),
           res.vendorId, vendorMap(res.vendorId.toString),
           res.measureId, measureMap(res.measureId.toString),
-          res.amount, res.amount).map { resNew =>
+          res.amount, res.amount, "open").map { resNew =>
           repoProduct.updateAmount(res.productId, res.amount)
           Redirect(routes.ProductInvController.show(resNew.id))
         }

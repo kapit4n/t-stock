@@ -109,9 +109,6 @@ GET     /vendor_add         			controllers.VendorController.addGet
 
 # Now for insumos or products
 GET     /product_search 				controllers.ProductController.searchProductPost
-GET     /add_cart 						controllers.CartController.addCartPost
-POST    /update_cartItems				controllers.CartController.updateCartItemsPost
-POST    /filter_byCategory				controllers.CartController.filterByCategoryPost
 GET     /product_show/:id 				controllers.ProductController.show(id: Long)
 GET     /product_remove/:id        		controllers.ProductController.delete(id: Long)
 GET     /products/:id 					controllers.ProductController.getById(id: Long)
@@ -141,7 +138,6 @@ GET     /productTransform_list         			controllers.ProductTransformController
 GET     /productTransform_add/:id         		controllers.ProductTransformController.addGet(id: Long)
 
 # Cashier endpoints
-GET     /cashier/cart_show_current    			controllers.CartController.showCurrent
 GET     /cashier/product_list         			controllers.ProductController.cashier_index
 GET     /cashier/productRequest_list         	controllers.ProductRequestController.cashier_index
 GET     /cashier/customer_list/:page   			controllers.CustomerController.cashier_index(page: Int)
@@ -203,10 +199,18 @@ GET     /discountReports         				controllers.DiscountReportController.getDis
 GET     /discountReport_list         			controllers.DiscountReportController.index
 GET     /discountReport_add         			controllers.DiscountReportController.addGet
 
-# Now for Product requests
-GET     /productRequest_show/:id 				controllers.ProductRequestController.show(id: Long)
+# Cart
 GET     /cart_show/:id 							controllers.CartController.show(id: Long)
 GET     /cart_list 								controllers.CartController.index
+GET     /add_cart 						        controllers.CartController.addCartPost
+POST    /update_cartItems				        controllers.CartController.updateCartItemsPost
+POST    /filter_byCategory				        controllers.CartController.filterByCategoryPost
+POST    /cart_close				                controllers.CartController.cartClose
+GET     /cashier/cart_show_current    			controllers.CartController.showCurrent
+
+
+# Now for Product requests
+GET     /productRequest_show/:id 				controllers.ProductRequestController.show(id: Long)
 GET     /productRequest_update/:id 				controllers.ProductRequestController.getUpdate(id: Long)
 GET     /productRequest_send/:id        		controllers.ProductRequestController.getSend(id: Long)
 GET     /productRequest_finish/:id        		controllers.ProductRequestController.getFinish(id: Long)

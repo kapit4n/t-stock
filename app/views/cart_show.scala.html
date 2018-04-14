@@ -5,7 +5,9 @@
 @main("view") {
     @navs.nav_cashier(handler)
     <div class="container">
-        <button type="button" id="saveCart" class="btn btn-primary btn-sm">Save And Close</button>
+        <button type="button" id="closeCart" class="btn btn-primary btn-sm">Close</button>
+
+        <button type="button" id="saveCart" class="btn btn-primary btn-sm">Save</button>
         <script type="text/javascript">
             $("#saveCart").click(function() {
                 if (confirm('Are you sure you want to save and close the cart')) {

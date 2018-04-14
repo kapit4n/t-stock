@@ -40,23 +40,30 @@ class ProductInvRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(i
 
     def amountLeft = column[Int]("amountLeft")
 
-    def * = (id, productId, productName, vendorId, vendorName, measureId, measureName, amount, amountLeft) <> ((ProductInv.apply _).tupled, ProductInv.unapply)
+    def status = column[String]("status")
+
+    def * = (id, productId, productName, vendorId, vendorName, measureId, measureName, amount, amountLeft, status) <> ((ProductInv.apply _).tupled, ProductInv.unapply)
   }
 
   private val tableQ = TableQuery[ProductInvsTable]
 
-  def create(productId: Long, productName: String, vendorId: Long, vendorName: String, measureId: Long, measureName: String, amount: Int, amountLeft: Int): Future[ProductInv] = db.run {
+  def create(productId: Long, productName: String, vendorId: Long, vendorName: String, measureId: Long, measureName: String, amount: Int, amountLeft: Int, status: String): Future[ProductInv] = db.run {
     (tableQ.map(p => (
       p.productId, p.productName, p.vendorId,
-      p.vendorName, p.measureId, p.measureName, p.amount, p.amountLeft))
+      p.vendorName, p.measureId, p.measureName, p.amount, p.amountLeft, p.status))
       returning tableQ.map(_.id)
       into ((nameAge, id) => ProductInv(
       id, nameAge._1, nameAge._2, nameAge._3, nameAge._4,
-      nameAge._5, nameAge._6, nameAge._7, nameAge._8))) += (productId, productName, vendorId, vendorName, measureId, measureName, amount, amountLeft)
+      nameAge._5, nameAge._6, nameAge._7, nameAge._8, nameAge._9))) += (productId, productName, vendorId, vendorName,
+                                                                        measureId, measureName, amount, amountLeft, status)
   }
 
   def list(): Future[Seq[ProductInv]] = db.run {
     tableQ.result
+  }
+
+  def openProductInvs(): Future[Seq[ProductInv]] = db.run {
+    tableQ.filter(pInv => pInv.status === "open" || pInv.status === "").result
   }
 
   def listByInsumo(id: Long): Future[Seq[ProductInv]] = db.run {
@@ -102,6 +109,12 @@ class ProductInvRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(i
     val q4 = for {c <- tableQ if c.id === id} yield c.amountLeft
     db.run(q4.update(amountLeft))
     tableQ.filter(_.id === id).result
+  }
+
+  def closeProductInv(id: Long): Boolean = {
+    val q = for {c <- tableQ if c.id === id} yield c.status
+    db.run(q.update("close"))
+    return true
   }
 
   // delete required

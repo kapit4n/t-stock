@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import javax.inject._
 import security.MyDeadboltHandler
 
-class CartController @Inject()(repoProductReq: ProductRequestRepository, repoProducts: ProductRepository,
+class CartController @Inject()(repoProductReq: ProductRequestRepository, repoInvReq: ProductInvRepository, repoProducts: ProductRepository,
                                repoCategory: CategoryRepository, repoRow: RequestRowRepository, repoVete: UserRepository,
                                repoSto: UserRepository, repoInsUser: UserRepository, repoUnit: MeasureRepository,
                                val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends Controller with I18nSupport {
@@ -25,6 +25,11 @@ class CartController @Inject()(repoProductReq: ProductRequestRepository, repoPro
       "storekeeper" -> longNumber,
       "status" -> text,
       "detail" -> text)(CreateProductRequestForm.apply)(CreateProductRequestForm.unapply)
+  }
+
+  val closeCartForm: Form[CloseCartForm] = Form {
+    mapping(
+      "id" -> nonEmptyText)(CloseCartForm.apply)(CloseCartForm.unapply)
   }
 
   val addCartForm: Form[AddCartForm] = Form {
@@ -58,7 +63,6 @@ class CartController @Inject()(repoProductReq: ProductRequestRepository, repoPro
     }, 3000.millis)
   }
 
-
   def index = LanguageAction.async { implicit request =>
     repoProductReq.list().map { res =>
       Ok(views.html.order.productRequest_index(new MyDeadboltHandler, res))
@@ -73,6 +77,18 @@ class CartController @Inject()(repoProductReq: ProductRequestRepository, repoPro
     }
     storeNames = getStorekeepersNamesMap()
     Ok(views.html.order.productRequest_add(new MyDeadboltHandler, newForm, employeesNames, storeNames))
+  }
+
+  def cartClose = LanguageAction.async { implicit request =>
+    newForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok("Failed"))
+      },
+      res => {
+        repoInvReq.closeProductInv(1L)
+        Future.successful(Ok("Success"))
+      }
+    )
   }
 
   def add = LanguageAction.async { implicit request =>
@@ -133,7 +149,6 @@ class CartController @Inject()(repoProductReq: ProductRequestRepository, repoPro
     }, 3000.millis)
   }
 
-  // to copy
   def show(id: Long) = LanguageAction.async { implicit request =>
     productList = getProductList()
     val requestRows = getChildren(id)
@@ -372,6 +387,8 @@ class CartController @Inject()(repoProductReq: ProductRequestRepository, repoPro
       })
   }
 }
+
+case class CloseCartForm(id: String)
 
 case class AddCartForm(id: String)
 
