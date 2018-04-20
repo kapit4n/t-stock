@@ -8,6 +8,77 @@
         <button type="button" id="closeCart" class="btn btn-primary btn-sm">Close</button>
 
         <button type="button" id="saveCart" class="btn btn-primary btn-sm">Save</button>
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calculatorToPay">
+            Pay
+        </button>
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#calculatorToReturn">
+            Return
+        </button>
+
+        <div class="modal fade" id="calculatorToPay" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Pay Money</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <input type="number" id="incomeValue" value="0">
+                        </div>
+                        <button type="button" id="one" class="btn btn-primary btn-sm incomeValue">1</button>
+                        <button type="button" id="two" class="btn btn-primary btn-sm incomeValue">2</button>
+                        <button type="button" id="five" class="btn btn-primary btn-sm incomeValue">5</button>
+                        <button type="button" id="ten" class="btn btn-primary btn-sm incomeValue">10</button>
+                        <button type="button" id="twenty" class="btn btn-primary btn-sm incomeValue">20</button>
+                        <button type="button" id="fifty" class="btn btn-primary btn-sm incomeValue">50</button>
+                        <button type="button" id="hundred" class="btn btn-primary btn-sm incomeValue">100</button>
+                        <button type="button" id="2hundred" class="btn btn-primary btn-sm incomeValue">200</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="incomeClear">Clear</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="incomeEnter">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="calculatorToReturn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="1exampleModalLabel">Return Money</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <input type="number" id="returnValue" value="0">
+                        </div>
+                        <button type="button" id="1one" class="btn btn-primary btn-sm returnValue">1</button>
+                        <button type="button" id="1two" class="btn btn-primary btn-sm returnValue">2</button>
+                        <button type="button" id="1five" class="btn btn-primary btn-sm returnValue">5</button>
+                        <button type="button" id="1ten" class="btn btn-primary btn-sm returnValue">10</button>
+                        <button type="button" id="1twenty" class="btn btn-primary btn-sm returnValue">20</button>
+                        <button type="button" id="1fifty" class="btn btn-primary btn-sm returnValue">50</button>
+                        <button type="button" id="1hundred" class="btn btn-primary btn-sm returnValue">100</button>
+                        <button type="button" id="12hundred" class="btn btn-primary btn-sm returnValue">200</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="returnClear">Clear</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="returnEnter">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
             $("#saveCart").click(function() {
                 if (confirm('Are you sure you want to save and close the cart')) {
@@ -20,6 +91,47 @@
                     });
                 }
             });
+
+            $(".returnValue").click(function(event) {
+                $("#returnValue").val(parseInt($(event.target).text()) + parseInt($("#returnValue").val()))
+            });
+
+            $(".incomeValue").click(function() {
+                $("#incomeValue").val(parseInt($(event.target).text()) + parseInt($("#incomeValue").val()))
+            });
+
+            function completeCalculation() {
+                var incomeMoney = parseInt($("#incomeMoney").html());
+                var returnMoney = parseInt($("#returnMoney").html());
+                var totalMoney = parseInt($("#totalMoney").html());
+                console.log(incomeMoney);
+                console.log(returnMoney);
+                console.log(totalMoney);
+                if ((incomeMoney - returnMoney) === totalMoney) {
+                    $("#payCompleted").html("Completed");
+                } else {
+                    $("#payCompleted").html("Not Completed");
+                }
+            }
+
+            $("#incomeEnter").click(function() {
+                $("#incomeMoney").html(parseInt($("#incomeValue").val()))
+                completeCalculation();
+            });
+
+            $("#returnEnter").click(function() {
+                $("#returnMoney").html(parseInt($("#returnValue").val()))
+                completeCalculation();
+            });
+
+            $("#incomeClear").click(function() {
+                $("#incomeValue").val(0)
+            });
+
+            $("#returnClear").click(function() {
+                $("#returnValue").val(0)
+            });
+
         </script>
 
         @restrict(roles = List(Array("productRequestList"))) {
@@ -67,12 +179,9 @@
                             @for(child <- children) {
                                 <tr>
                                     <td>
-                                        @restrictOr(roles = List(Array("productShow"))) {
-                                            <a href="/product_show/@child.productId" style="font-size: 9px;">@child.id : @child.productName</a>
-                                        }{
-                                        @child.id : @child.productName
-                                        }
                                         <img src="http://localhost:8081/assets/images/@(child.productId)_product.jpg" style="height: 20px;" alt="">
+                                        <a href="/product_show/@child.productId" style="font-size: 9px;">@child.id : @child.productName</a>
+
                                     </td>
                                     <td><input type="text" name="quantity" value="@child.quantity" style="width: 70px;"></td>
                                     <td>@child.totalPrice</td>
@@ -86,8 +195,10 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                          <td colspan="2">Total</td>
-                          <td colspan="3">@totalPrice</td>
+                            <td colspan="1">Total: <div style="display: inline;" id="totalMoney">@totalPrice</div></td>
+                          <td colspan="1">In: <div style="display: inline;" id="incomeMoney">0</div></td>
+                          <td colspan="1">Ret: <div style="display: inline;" id="returnMoney">0</div></td>
+                          <td colspan="1"><div style="display: inline;" id="payCompleted"></div></td>
                         </tr>
                       </tfoot>
                     </table>
