@@ -303,6 +303,7 @@ create table productInv (
   amountLeft INT,
   cost_unit double  DEFAULT 0,
   total_cost double  DEFAULT 0,
+  status text,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

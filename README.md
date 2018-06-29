@@ -20,10 +20,19 @@ Hi Stock is a system that will help us to manage the stock in the an industry th
 * Go to localhost:9000
 * Open the application with sublime
 
-## mockup card show page
-![Shopping Card](https://bytebucket.org/lartl/t-stock/raw/4af8837d28a9d2362b07a8e826c74a5a7192ddca/mockups/t_stock_shopping_card.png?token=70567480360d55b9d964a3cff675deb72414a46c)
-## mockup
-![Product View](https://bytebucket.org/lartl/t-stock/raw/4af8837d28a9d2362b07a8e826c74a5a7192ddca/mockups/t_stock_product_view.png?token=9b9d83e183987520dbdbe323bd2f008c83dde581)
+
+## Product Info
+![Product Info]
+<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-product-show.png" alt="Drawing" width="100%"/>
+
+## Home Page
+![Shopping Card]
+<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-cart.png" alt="Drawing" width="100%"/>
+
+## Inventory
+![Inventory]
+<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-inventory.png" alt="Drawing" width="100%"/>
+
 
 
 ## Load dependencies with activator
