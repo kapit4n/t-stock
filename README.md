@@ -2,8 +2,6 @@
 
 Hi Stock is a system that will help us to manage the stock in the an industry that transform raw material to product.
 
-## Home Page
-![Shopping Card]
 <img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-cart.png" alt="Drawing" width="100%"/>
 
 # Prerequisites
