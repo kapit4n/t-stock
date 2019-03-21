@@ -2,18 +2,13 @@
 
 Hi Stock is a system that will help us to manage the stock in the an industry that transform raw material to product.
 
-## Product Info
-![Product Info]
-<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-product-show.png" alt="Drawing" width="100%"/>
-
 ## Home Page
 ![Shopping Card]
 <img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-cart.png" alt="Drawing" width="100%"/>
 
-## Inventory
-![Inventory]
-<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-inventory.png" alt="Drawing" width="100%"/>
-
+## Product Info
+![Product Info]
+<img src="https://github.com/kapit4n/t-stock/raw/master/mockups/t-stock-product-show.png" alt="Drawing" width="100%"/>
 
 # Prerequisites
 * Scala
@@ -46,7 +41,6 @@ Hi Stock is a system that will help us to manage the stock in the an industry th
 * Register Orders
 * Register Measure
 * Register Accounts
-* Register 
 
 ## Features in progress
 * Purchase order
